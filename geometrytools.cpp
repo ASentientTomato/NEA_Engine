@@ -333,10 +333,17 @@ namespace geo{
 		if (S.vertexA.x == S.vertexB.x && S.vertexA.y == S.vertexB.y) {
 			return S.vertexA;
 		}
+		vec lastd = { DBL_MAX,DBL_MAX };
 		while (true) {
 			if (S.count == 2) {
 
 				vec onLine = closestPoint(S.vertexA, S.vertexB, vec{ 0,0 });
+				if (dot(onLine,onLine) < dot(lastd,lastd)) {
+					lastd = onLine;
+				}
+				else {
+					return lastd;
+				}
 				d = scale(onLine, -1);
 				//if you get infinite loops, check this condition.
 				if (d.x == 0 && d.y == 0 || d.x < 0.0000001 && d.y < 0.0000001) {
@@ -410,6 +417,7 @@ namespace geo{
 					//determine reference and incident shape (incident = more perpendicular to the penetration normal = the penetrating shape)
 					if (a < b || (a == b && dot(lineB, lineB) > dot(lineA, lineA))) {
 						referenceShape = &B;
+						man.aIsReference = false;
 						reference1 = maxPenetrationB;
 						reference2 = maxPenetrationB2;
 
@@ -420,6 +428,7 @@ namespace geo{
 
 					else {
 						referenceShape = &A;
+						man.aIsReference = true;
 						reference1 = maxPenetrationA;
 						reference2 = maxPenetrationA2;
 
@@ -537,6 +546,7 @@ namespace geo{
 					S.vertexB = S.vertexC;
 					S.count = 2;
 				}
+	
 				else {
 
 					//it's on BC - A can be removed.
