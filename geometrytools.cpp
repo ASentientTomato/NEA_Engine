@@ -319,8 +319,9 @@ namespace geo{
 		}
 	}
 
+	//returns collision data containing the direction of the force that should be applied to B.
 	vec getCollisionData(const convex &A, const convex &B, collision& man, line& incline, line& refline)
-		//incline and refline are here for testing only.
+		//incline and refline are here for testing
 	{
 
 		//pick arbitrary initial simplex
@@ -387,8 +388,8 @@ namespace geo{
 					//now, calculate the collision location:
 					{
 						double mag = magnitude(penetrationNormal);
-						man.contacts[0].normal = scale(penetrationNormal, 1 / mag);
-						man.contacts[0].penetration = mag;
+						man.contacts[0].normal = scale(penetrationNormal, 1 / mag);//correct
+						man.contacts[0].penetration = mag;//correct
 					}
 
 					d = penetrationNormal;
@@ -414,6 +415,15 @@ namespace geo{
 
 					double a = abs(dot(scale(lineB, 1 / magnitude(lineB)), penetrationNormal));
 					double b = abs(dot(scale(lineA, 1 / magnitude(lineA)), penetrationNormal));
+
+					//fixing rounding error problems:
+					if (a < 0.000000001) {
+						a = 0;
+					}
+					if (b < 0.000000001) {
+						b = 0;
+					}
+
 					//determine reference and incident shape (incident = more perpendicular to the penetration normal = the penetrating shape)
 					if (a < b || (a == b && dot(lineB, lineB) > dot(lineA, lineA))) {
 						referenceShape = &B;
@@ -445,18 +455,18 @@ namespace geo{
 						//there's ambiguity in this situation.
 						int re1 = reference1; int re2 = reference2;
 						putInOrder(re1, re2, referenceShape->points.size() - 1);
-						if (re1 != re2 + 1 && re2 != re1 + 1) {
-						}
+						//if (re1 != re2 + 1 && re2 != re1 + 1) {
+						//} what the hell is this
 						if (isPointInside(incidentShape->points[incident2], referenceShape, re1, re2)) {
 							//switch incident shape points
-							int temp = incident1;
-							incident1 = incident2;
-							incident2 = temp;
+							//int temp = incident1;
+							//incident1 = incident2;
+							//incident2 = temp;
+							std::swap(incident1, incident2);
 						}
 					}
 
 					man.contacts[0].position = incidentShape->points[incident1];//add((*incidentShape).points[incident1], d);
-
 
 					int biggerreference = reference1;
 					int smallerreference = reference2;
@@ -489,8 +499,10 @@ namespace geo{
 							man.contacts[1].position = pen;
 							pen = sub(referenceShape->points[suspiciousPoint], pen);
 							man.contacts[1].penetration = magnitude(pen);
+							if(!man.aIsReference){
+								pen = scale(pen, -1);
+							}
 							man.contacts[1].normal = scale(pen, 1 / man.contacts[1].penetration);
-
 							refline.start = referenceShape->points[reference1];
 							refline.direction = sub(referenceShape->points[reference2], refline.start);
 
@@ -528,6 +540,9 @@ namespace geo{
 					vec penetrationVector = sub(closestPoint(referenceShape->points[reference1], referenceShape->points[reference2], incidentShape->points[incident2]), incidentShape->points[incident2]);
 					man.contacts[1].penetration = magnitude(penetrationVector);
 					man.contacts[1].normal = scale(penetrationVector, 1 / man.contacts[1].penetration);
+					if (!man.aIsReference) {
+						man.contacts[1].normal = scale(man.contacts[1].normal, -1);
+					}
 					man.contacts[1].position = incidentShape->points[incident2];//add(incidentShape->points[incident2],penetrationVector);
 
 
