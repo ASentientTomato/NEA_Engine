@@ -346,7 +346,7 @@ namespace geo{
 				}
 				d = scale(onLine, -1);
 				//if you get infinite loops, check this condition.
-				if (d.x == 0 && d.y == 0 || d.x < 0.0000001 && d.y < 0.0000001) {
+				if (d.x == 0 && d.y == 0 || abs(d.x) < 0.0000001 && abs(d.y) < 0.0000001) {
 					return onLine;
 				}
 				vec toAdd = minowskyDifference(A, B, d);
