@@ -2,10 +2,24 @@
 #include <vector>
 
 namespace geo{
-	typedef struct vec {
+	//typedef struct vec {
+	//	double x;
+	//	double y;
+	//} vec;
+	class vec {
+	public:
 		double x;
 		double y;
-	} vec;
+		vec operator+(const vec& v) {
+			return vec{ x + v.x, y + v.y };
+		}
+		vec operator-(const vec& v) {
+			return vec{ x - v.x, y - v.y };
+		}
+		vec operator*(const double& d) {
+			return vec{ x*d, y*d };
+		}
+	};
 
 	typedef struct convex {
 		std::vector<vec> points;

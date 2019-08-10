@@ -123,8 +123,8 @@ namespace geo{
 		}
 		else {
 		}
-		return add(A, scale(sub(B, A), v)); //add(scale(A, 1-v), scale(B, v)); works too
-	}
+		return A + scale(sub(B, A), v); //add(scale(A, 1-v), scale(B, v)); works too
+	}//add(A, scale(sub(B, A), v)); 
 
 	int support(const convex& A, const vec& d) {
 		//Find the greatest point in A, in the direction d.
