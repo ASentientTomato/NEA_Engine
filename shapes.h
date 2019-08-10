@@ -10,14 +10,17 @@ namespace geo{
 	public:
 		double x;
 		double y;
-		vec operator+(const vec& v) {
+		vec operator+(const vec& v) const {
 			return vec{ x + v.x, y + v.y };
 		}
-		vec operator-(const vec& v) {
+		vec operator-(const vec& v) const {
 			return vec{ x - v.x, y - v.y };
 		}
-		vec operator*(const double& d) {
+		vec operator*(const double& d) const {
 			return vec{ x*d, y*d };
+		}
+		bool operator==(const vec& v) const {
+			return (x == v.x && y == v.y);
 		}
 	};
 

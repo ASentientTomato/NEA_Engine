@@ -4,17 +4,8 @@
 
 namespace geo{
 	//----------------------------------------------VECTOR MATHS-----------------------------------------------
-	vec add(vec a, vec b) {
-		return vec{ a.x + b.x, a.y + b.y };
-	}
-	vec sub(vec a, vec b) {
-		return vec{ a.x - b.x, a.y - b.y };
-	}
 	double dot(vec a, vec b) {
 		return a.x * b.x + a.y * b.y;
-	}
-	vec scale(vec a, double b) {
-		return vec{ a.x * b, a.y * b };
 	}
 	double magnitude(vec A) {
 		return sqrt(A.x * A.x + A.y * A.y);
@@ -22,9 +13,9 @@ namespace geo{
 	void printVec(vec A) {
 		std::cout << "(" << A.x << ", " << A.y << ") ";
 	}
-	bool compare(vec A, vec B) {
-		return (A.x == B.x && A.y == B.y);
-	}
+	//bool compare(vec A, vec B) {
+	//	return (A.x == B.x && A.y == B.y);
+	//}
 
 	//----------------------------------------------MATRIX MATHS-----------------------------------------------
 	//matrices are defined here such that [1,2,3,4] is equivalent to the matrix
@@ -101,12 +92,12 @@ namespace geo{
 
 	double getV(vec A, vec B, vec Q) {
 		//let's use doubles! (naive solution, but it might just work:)
-		vec n = sub(B, A);
+		vec n = B - A;
 		double abMag = sqrt(double(n.x*n.x + n.y*n.y));
 		abMag = 1 / abMag;
-		n = scale(n, abMag);
+		n = n * abMag;
 
-		double v = dot(sub(Q, A), n);
+		double v = dot((Q - A), n);
 		v *= abMag;
 		return v;
 	}
@@ -123,7 +114,7 @@ namespace geo{
 		}
 		else {
 		}
-		return A + scale(sub(B, A), v); //add(scale(A, 1-v), scale(B, v)); works too
+		return A + (B - A) * v; //add(scale(A, 1-v), scale(B, v)); works too
 	}//add(A, scale(sub(B, A), v)); 
 
 	int support(const convex& A, const vec& d) {
@@ -142,12 +133,12 @@ namespace geo{
 
 	vec minowskyDifference(const convex &A, const convex &B, const vec d)
 	{
-		return sub(A.points[support(A, d)], B.points[support(B, scale(d, -1))]);
+		return (A.points[support(A, d)] - B.points[support(B, d * -1)]);
 	}
 
 	bool contains(std::vector<vec> &V, vec v) {
 		for (vec i : V) {
-			if (compare(i, v)) {
+			if (i == v) {
 				return true;
 			}
 		}
@@ -212,11 +203,11 @@ namespace geo{
 			left = v - 1;
 			right = v + 1;
 		}
-		vec l = sub(A.points[v], A.points[left]);
-		vec r = sub(A.points[v], A.points[right]);
+		vec l = A.points[v] - A.points[left];
+		vec r = A.points[v] - A.points[right];
 
-		l = scale(l, 1 / magnitude(l));
-		r = scale(r, 1 / magnitude(r));
+		l = l * (1 / magnitude(l));
+		r = r * (1 / magnitude(r));
 
 		if (abs(dot(r, penetrationNormal)) <= abs(dot(l, penetrationNormal))) {
 			//the right edge is more perpendicular
@@ -229,9 +220,9 @@ namespace geo{
 	}
 	//don't forget to only call this with index of B > index of A, to maintain vector winding
 	bool onLeftOfLine(const vec A, const vec B, const vec Q, bool clockwise) {
-		vec v = sub(B, A);
+		vec v = B - A;
 		v = vec{ v.y,v.x*-1 };
-		return !((dot(v, sub(Q, A)) > 0) ^ clockwise);
+		return !((dot(v, Q - A) > 0) ^ clockwise);
 
 		//1, 1 = 1
 		//1, 0 = 0
@@ -328,7 +319,7 @@ namespace geo{
 		simplexVec S;
 		S.count = 1;	//TODO: this function is structured in a really dumb way.
 		S.vertexA = minowskyDifference(A, B, A.points[0]);
-		vec d = scale(A.points[0], -1);	//this is lacking a lot of potential efficiency improvements.
+		vec d = A.points[0] * -1;	//this is lacking a lot of potential efficiency improvements.
 		S.count = 2;	//I should implement them at some point.
 		S.vertexB = minowskyDifference(A, B, d);
 		if (S.vertexA.x == S.vertexB.x && S.vertexA.y == S.vertexB.y) {
@@ -345,13 +336,13 @@ namespace geo{
 				else {
 					return lastd;
 				}
-				d = scale(onLine, -1);
+				d = onLine * -1;
 				//if you get infinite loops, check this condition.
 				if (d.x == 0 && d.y == 0 || abs(d.x) < 0.0000001 && abs(d.y) < 0.0000001) {
 					return onLine;
 				}
 				vec toAdd = minowskyDifference(A, B, d);
-				if (compare(toAdd, S.vertexA) || compare(toAdd, S.vertexB)) {
+				if ((toAdd == S.vertexA) || (toAdd == S.vertexB)) {
 					return onLine;
 				}
 				else {
@@ -388,21 +379,21 @@ namespace geo{
 					//now, calculate the collision location:
 					{
 						double mag = magnitude(penetrationNormal);
-						man.contacts[0].normal = scale(penetrationNormal, 1 / mag);//correct
+						man.contacts[0].normal = penetrationNormal * (1 / mag);//correct
 						man.contacts[0].penetration = mag;//correct
 					}
 
 					d = penetrationNormal;
 					//find the (index of) points of most penetration
 					int maxPenetrationA = support(A, d);
-					d = scale(d, -1);
+					d = d * -1;
 					int maxPenetrationB = support(B, d);
 
 					int maxPenetrationA2 = mostPerpendicular(A, maxPenetrationA, penetrationNormal);
 					int maxPenetrationB2 = mostPerpendicular(B, maxPenetrationB, penetrationNormal);
 
-					vec lineB = sub(B.points[maxPenetrationB2], B.points[maxPenetrationB]);
-					vec lineA = sub(A.points[maxPenetrationA2], A.points[maxPenetrationA]);
+					vec lineB = B.points[maxPenetrationB2] - B.points[maxPenetrationB];
+					vec lineA = A.points[maxPenetrationA2] - A.points[maxPenetrationA];
 
 					const convex *referenceShape;
 					int reference1;
@@ -413,8 +404,8 @@ namespace geo{
 					int incident2;
 
 
-					double a = abs(dot(scale(lineB, 1 / magnitude(lineB)), penetrationNormal));
-					double b = abs(dot(scale(lineA, 1 / magnitude(lineA)), penetrationNormal));
+					double a = abs(dot(lineB * (1 / magnitude(lineB)), penetrationNormal));
+					double b = abs(dot(lineA * (1 / magnitude(lineA)), penetrationNormal));
 
 					//fixing rounding error problems:
 					if (a < 0.000000001) {
@@ -497,17 +488,17 @@ namespace geo{
 							man.contactcount = 2;
 							vec pen = closestPoint(incidentShape->points[incident1], incidentShape->points[incident2], referenceShape->points[suspiciousPoint]);
 							man.contacts[1].position = pen;
-							pen = sub(referenceShape->points[suspiciousPoint], pen);
+							pen = referenceShape->points[suspiciousPoint] - pen;
 							man.contacts[1].penetration = magnitude(pen);
 							if(!man.aIsReference){
-								pen = scale(pen, -1);
+								pen = pen * -1;
 							}
-							man.contacts[1].normal = scale(pen, 1 / man.contacts[1].penetration);
+							man.contacts[1].normal = pen * (1 / man.contacts[1].penetration);
 							refline.start = referenceShape->points[reference1];
-							refline.direction = sub(referenceShape->points[reference2], refline.start);
+							refline.direction = referenceShape->points[reference2] - refline.start;
 
 							incline.start = incidentShape->points[incident1];
-							incline.direction = sub(incidentShape->points[incident2], incline.start);
+							incline.direction = incidentShape->points[incident2] - incline.start;
 
 							return Q;
 						}
@@ -516,10 +507,10 @@ namespace geo{
 
 
 						refline.start = referenceShape->points[reference1];
-						refline.direction = sub(referenceShape->points[reference2], refline.start);
+						refline.direction = referenceShape->points[reference2] - refline.start;
 
 						incline.start = incidentShape->points[incident1];
-						incline.direction = sub(incidentShape->points[incident2], incline.start);
+						incline.direction = incidentShape->points[incident2] - incline.start;
 
 
 						return Q;
@@ -536,22 +527,22 @@ namespace geo{
 					//assumption: the second vertex, if inside the shape, penetrated through the same line as the first vertex
 
 
-					man.contactcount = 2;
-					vec penetrationVector = sub(closestPoint(referenceShape->points[reference1], referenceShape->points[reference2], incidentShape->points[incident2]), incidentShape->points[incident2]);
+					man.contactcount = 2;//todo
+					vec penetrationVector = closestPoint(referenceShape->points[reference1], referenceShape->points[reference2], incidentShape->points[incident2]) - incidentShape->points[incident2];
 					man.contacts[1].penetration = magnitude(penetrationVector);
-					man.contacts[1].normal = scale(penetrationVector, 1 / man.contacts[1].penetration);
+					man.contacts[1].normal = penetrationVector * (1 / man.contacts[1].penetration);
 					if (!man.aIsReference) {
-						man.contacts[1].normal = scale(man.contacts[1].normal, -1);
+						man.contacts[1].normal = man.contacts[1].normal * -1;
 					}
 					man.contacts[1].position = incidentShape->points[incident2];//add(incidentShape->points[incident2],penetrationVector);
 
 
 
 					refline.start = referenceShape->points[reference1];
-					refline.direction = sub(referenceShape->points[reference2], refline.start);
+					refline.direction = referenceShape->points[reference2] - refline.start;
 
 					incline.start = incidentShape->points[incident1];
-					incline.direction = sub(incidentShape->points[incident2], incline.start);
+					incline.direction = incidentShape->points[incident2] - incline.start;
 
 
 					return Q;

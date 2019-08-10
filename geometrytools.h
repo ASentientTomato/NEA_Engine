@@ -6,13 +6,10 @@
 namespace geo {
 	//--------------------------------------------VECTOR MATHS--------------------------------------------
 
-	vec add(vec a, vec b);
-	vec sub(vec a, vec b);
 	double dot(vec a, vec b);
-	vec scale(vec a, double b);
 	double magnitude(vec A);
 	void printVec(vec A);
-	bool compare(vec A, vec B);
+	//bool compare(vec A, vec B);
 
 	//--------------------------------------------MATRIX MATHS--------------------------------------------
 
