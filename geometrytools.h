@@ -9,7 +9,6 @@ namespace geo {
 	double dot(vec a, vec b);
 	double magnitude(vec A);
 	void printVec(vec A);
-	//bool compare(vec A, vec B);
 
 	//--------------------------------------------MATRIX MATHS--------------------------------------------
 

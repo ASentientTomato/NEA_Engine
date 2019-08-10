@@ -2,10 +2,6 @@
 #include <vector>
 
 namespace geo{
-	//typedef struct vec {
-	//	double x;
-	//	double y;
-	//} vec;
 	class vec {
 	public:
 		double x;
