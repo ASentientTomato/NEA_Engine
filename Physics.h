@@ -27,13 +27,20 @@ struct rotation {
 	float accelaration = 0;
 	float angle = 0;
 };
-class Rigidbody {
+class Shape {
+public:
+	geo::convex shape;
+	void translate(geo::vec translationVector);
+	void rotate(float radians, const geo::vec& centerOfRotation);
+	void zoom(float zoomFactor, geo::vec centerOfZoom);
+};
+class Rigidbody : public Shape{
 public:
 	translation trans;
 	rotation rot;
 	geo::vec com;
 	//center of mass relative to vertex at 0, when shape is not rotated
-	geo::convex shape;
+	
 	float restitution = 0.7;
 	float static_friction = 0.5;
 	float dynamic_friction = 0.5;
@@ -44,12 +51,11 @@ public:
 	//to set mass to infinite, simply pass a negative number
 	Rigidbody(geo::convex shape, translation trans, rotation rot, float resitution);
 	Rigidbody();
-	void translate(geo::vec translationVector);
-	void rotate(float radians, geo::vec centerOfRotation);
-	void rotate(float radians);
 	void applyForce(geo::vec toApply);
 	void forceIntegration(float dt);
 	void applyImpulse(const geo::vec& impulse, const geo::vec& rx);
+	void rotate(float radians);
+	void rotate(float radians, const geo::vec& centerOfRotation);
 };
 
 void resolveManifold(manifold man);

@@ -9,8 +9,16 @@ namespace geo{
 		vec operator+(const vec& v) const {
 			return vec{ x + v.x, y + v.y };
 		}
+		void operator+=(const vec& v) {
+			this->x += v.x;
+			this->y += v.y;
+		}
 		vec operator-(const vec& v) const {
 			return vec{ x - v.x, y - v.y };
+		}
+		void operator-=(const vec& v) {
+			this->x -= v.x;
+			this->y -= v.y;
 		}
 		vec operator*(const double& d) const {
 			return vec{ x*d, y*d };

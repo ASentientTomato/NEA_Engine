@@ -5,6 +5,9 @@
 //from 0 to 1, how much overlapping shapes should be translated to prevent them from overlapping
 #define CORRECTION_FACTOR 0.5	
 
+///////////////////////////////////////////////////////////////////	Maths ///////////////////////////////////////////////////////////////////
+
+//this should all be in geometry
 geo::vec cross(geo::vec V, double x) {
 	return { x*V.y, -x * V.x };
 }
@@ -15,12 +18,47 @@ double cross(geo::vec A, geo::vec B) {
 	return  A.x * B.y - A.y * B.x;
 }
 
+
+///////////////////////////////////////////////////////////////////	Shape Class	///////////////////////////////////////////////////////////////////
+void Shape::translate(geo::vec translationVector) {
+	for (geo::vec& i : this->shape.points) {
+		i = i + translationVector;
+	}
+}
+
+void Shape::rotate(float radians, const geo::vec& centerOfRotation) {
+	geo::vec v;
+	float cosine = cos(radians);
+	float sine = sin(radians);
+	for (geo::vec& i : this->shape.points) {
+		v = i - centerOfRotation;
+		i = centerOfRotation + geo::vec{ cosine * v.x - sine * v.y, sine * v.x + cosine * v.y };
+	}
+}
+
+void Shape::zoom(float zoomFactor, geo::vec centerOfZoom) {
+	geo::vec temp;
+
+	for (geo::vec& i : this->shape.points) {
+
+		temp = i - centerOfZoom;
+		temp = temp * zoomFactor;
+		i = centerOfZoom + temp;
+
+	}
+
+}
+
+
+///////////////////////////////////////////////////////////////////	Rigidbody Class	///////////////////////////////////////////////////////////////////
 geo::vec Rigidbody::getCOM() {
 	float cosine = cos(this->rot.angle);
 	float sine = sin(this->rot.angle);
 	geo::vec centerOfMass = geo::vec{ cosine * this->com.x - sine * this->com.y, sine * this->com.x + cosine * this->com.y };
 	return centerOfMass + this->shape.points[0];
 }
+
+
 void Rigidbody::calculateCOM()
 {
 	geo::vec centroid = { 0, 0 };
@@ -61,6 +99,25 @@ void Rigidbody::calculateCOM()
 	this->rot.angle = 0;
 }
 
+
+void Rigidbody::rotate(float radians, const geo::vec& centerOfRotation) {
+	geo::vec v;
+	float cosine = cos(radians);
+	float sine = sin(radians);
+	for (geo::vec& i : this->shape.points) {
+		v = i - centerOfRotation;
+		i = centerOfRotation + geo::vec{ cosine * v.x - sine * v.y, sine * v.x + cosine * v.y };
+	}
+	this->rot.angle += radians;
+}
+
+
+void Rigidbody::rotate(float radians) {
+	//c++ is being annoying
+	this->rotate(radians, this->getCOM());
+}
+
+
 double Rigidbody::getArea() {
 	double area = 0;
 	int j = this->shape.points.size() - 1;
@@ -70,6 +127,7 @@ double Rigidbody::getArea() {
 	}
 	return abs(area / 2.0);
 }
+
 
 //to set mass to infinite, simply pass a negative number
 Rigidbody::Rigidbody(geo::convex shape, translation trans, rotation rot, float resitution) {
@@ -88,36 +146,15 @@ Rigidbody::Rigidbody(geo::convex shape, translation trans, rotation rot, float r
 	this->trans = trans;
 }
 
+
 Rigidbody::Rigidbody() {}
-
-
-
-void Rigidbody::translate(geo::vec translationVector) {
-	for (geo::vec& i : this->shape.points) {
-		i = i + translationVector;
-	}
-}
-
-void Rigidbody::rotate(float radians, geo::vec centerOfRotation) {
-	geo::vec v;
-	float cosine = cos(radians);
-	float sine = sin(radians);
-	for (geo::vec& i : this->shape.points) {
-		v = i - centerOfRotation;
-		i = centerOfRotation + geo::vec{ cosine * v.x - sine * v.y, sine * v.x + cosine * v.y };
-	}
-	this->rot.angle += radians;
-}
-void Rigidbody::rotate(float radians) {
-	//c++ is being annoying
-	this->rotate(radians, this->getCOM());
-}
 
 
 
 void Rigidbody::applyForce(geo::vec toApply) {
 	this->trans.accelaration = this->trans.accelaration + (toApply * this->trans.inv_mass);
 }
+
 
 void Rigidbody::forceIntegration(float dt) {
 	//semi-implicit euler integration//
@@ -131,10 +168,12 @@ void Rigidbody::forceIntegration(float dt) {
 	this->rot.accelaration = 0;
 }
 
+
 void Rigidbody::applyImpulse(const geo::vec& impulse, const geo::vec& rx) {
 	this->trans.velocity = this->trans.velocity + (impulse * this->trans.inv_mass);
 	this->rot.angularVelocity += this->rot.inv_MOI * cross(rx, impulse);
 }
+
 
 void resolveManifold(manifold man) {
 
@@ -216,3 +255,5 @@ void resolveManifold(manifold man) {
 	}
 	
 }
+
+
