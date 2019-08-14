@@ -33,6 +33,7 @@ public:
 	void translate(geo::vec translationVector);
 	void rotate(float radians, const geo::vec& centerOfRotation);
 	void zoom(float zoomFactor, geo::vec centerOfZoom);
+	Shape applyMatrix(geo::Matrix3D<float> mat, const geo::vec& center);
 };
 class Rigidbody : public Shape{
 public:

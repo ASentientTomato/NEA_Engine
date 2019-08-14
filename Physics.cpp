@@ -49,6 +49,27 @@ void Shape::zoom(float zoomFactor, geo::vec centerOfZoom) {
 
 }
 
+/*template<class T> Shape Shape::applyMatrix(geo::Matrix3D<T> mat, const geo::vec& center) {
+	geo::vec temp;
+	Shape shape;
+	for (int i = 0; i < this->shape.points.size(); i++) {
+		temp = this->shape.points[i] - center;
+		temp = mat * temp;
+		shape.shape.points.push_back(temp + center);
+
+	}
+}*/
+
+Shape Shape::applyMatrix(geo::Matrix3D<float> mat, const geo::vec& center) {
+	geo::vec temp;
+	Shape shape;
+	for (int i = 0; i < this->shape.points.size(); i++) {
+		temp = this->shape.points[i] - center;
+		temp = mat * temp;
+		shape.shape.points.push_back(temp + center);
+	}
+	return shape;
+}
 
 ///////////////////////////////////////////////////////////////////	Rigidbody Class	///////////////////////////////////////////////////////////////////
 geo::vec Rigidbody::getCOM() {
@@ -191,7 +212,7 @@ void resolveManifold(manifold man) {
 		restitution = man.B->restitution;
 	}
 
-	for (int i = 0; i < man.col.contactcount; i++) {
+	for (unsigned int i = 0; i < man.col.contactcount; i++) {
 
 		geo::vec ra = man.col.contacts[i].position - man.A->getCOM();
 		geo::vec rb = man.col.contacts[i].position - man.B->getCOM();
