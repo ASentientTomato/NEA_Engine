@@ -13,6 +13,35 @@
 //sfml -> loading from texture/sound directory
 
 
+
+//convert string in the format
+//		"(x,y)"				//
+//		into a vector.
+geo::vec readVec(const std::string& str) {
+	geo::vec vec;
+
+	int i = 0;
+	std::string result;
+	for (; i < str.length(); i++) {
+		if (i == '(') { continue; }
+		if (i == ',') { break; }
+		result += result[i];
+	}
+
+	vec.x = std::stod(result.c_str());
+
+	result = "";
+	for (int j = i; j < str.length(); j++) {
+		if (i == ')') { continue; }
+		if (i == ',') { continue; }
+		result += str[j];
+	}
+	
+	vec.y = std::stod(result.c_str());
+
+	return vec;
+}
+
 World loadGameState(std::string location) {
 
 
@@ -79,7 +108,16 @@ World loadGameState(std::string location) {
 		}
 
 		//load velocity
+		{
+			std::string velocity = body.attribute("Velocity").value();
+			rigid.trans.velocity = readVec(velocity);
+		}
 
+		//load accelaration (less necessary, but why not?)
+		{
+			std::string acc = body.attribute("Accelaration").value();
+			rigid.trans.accelaration = readVec(acc);
+		}
 		//load sides
 		
 		
