@@ -1,5 +1,7 @@
 #pragma once
 #include "geometrytools.h"
+#include "Graphics.h"
+
 //#include "Physics.cpp"
 
 class Rigidbody;
@@ -34,6 +36,8 @@ public:
 	void rotate(float radians, const geo::vec& centerOfRotation);
 	void zoom(float zoomFactor, geo::vec centerOfZoom);
 	Shape applyMatrix(geo::Matrix3D<float> mat, const geo::vec& center);
+
+	Graphics::Displayable* displayable;
 };
 class Rigidbody : public Shape{
 public:
