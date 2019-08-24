@@ -5,7 +5,7 @@
 namespace Graphics {
 
 	class Displayable {
-		sf::ConvexShape convex;
+		sf::ConvexShape convex;	//TODO: maybe replace with sprite.
 		sf::Texture texture;
 		//TODO: include texture, sound, etc.
 
@@ -26,7 +26,10 @@ namespace Graphics {
 			}
 		}
 
-
+		void load_texture(std::string location) {
+			this->texture.loadFromFile(location);
+			this->convex.setTexture(&this->texture);
+		}
 
 	};
 

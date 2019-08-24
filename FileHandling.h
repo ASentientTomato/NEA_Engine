@@ -8,6 +8,8 @@
 //PNG is probably the best texture format
 //I will use XML as my format.
 
+//TODO: this should be opened as doubles, not as text!
+
 //plan:
 //fstream -> data, directory of texture/sounds
 //sfml -> loading from texture/sound directory
@@ -42,7 +44,7 @@ geo::vec readVec(const std::string& str) {
 	return vec;
 }
 
-World loadGameState(std::string location) {
+World* loadGameState(std::string location) {
 
 
 	pugi::xml_document save;
@@ -54,9 +56,10 @@ World loadGameState(std::string location) {
 		std::cout << "XML parsing error\n";
 	}
 
+	//TODO:load background
 
-	std::vector<Rigidbody> objects;
 	//read rigidbodies
+	std::vector<Rigidbody> objects;
 	for (pugi::xml_node body = save.child("Body"); body; body = body.next_sibling("Body")) {
 		Rigidbody rigid;
 
@@ -141,14 +144,39 @@ World loadGameState(std::string location) {
 			//update displayable points
 			rigid.displayable->set_sides(vectors);
 		}
-		
-		
-		//TODO:
-		//load texture directory
-		//load sound directory
-		//load camera
-		//load backgrounds
-		//...etc.
 
+		//load texture
+		{
+			std::string textureLocation = body.attribute("Texture").value();
+			rigid.displayable->load_texture(textureLocation);
+		}
+
+		//commit object
+		objects.push_back(rigid);
 	}
+
+	//TODO:
+	//load sound directory
+	//load backgrounds
+	//...etc.
+	
+	//load camera
+	Camera camera;
+	{
+		pugi::xml_node cam = save.child("Camera");
+		std::string translate = cam.attribute("Translation").value();
+		std::string rotate = cam.attribute("Rotation").value();
+		std::string scale = cam.attribute("Zoom").value();
+		camera.objectiveTranslate(readVec(translate));
+		camera.rotate(std::stof(rotate.c_str()));
+		camera.zoom(std::stof(scale.c_str()));
+
+		//I can see the camera's GLOBAL_SHAPES pointer causing problems - when the world object is passed back, this may become a dangling pointer?
+	}
+
+	//create world
+	World* world = new World(objects, camera);	//this >should< prevent any dangling pointer issues.
+	//TODO: don't forget to deallocate!
+
+	return world;
 }
