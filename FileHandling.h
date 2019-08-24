@@ -64,7 +64,7 @@ World loadGameState(std::string location) {
 			//load mass
 			std::string mass = body.attribute("Mass").value();
 			if (mass == "INFINITY") {
-				rigid.trans.mass = std::numeric_limits<float>::infinity();	//TODO: test if this raises errors
+				rigid.trans.mass = DBL_MAX;	//std::numeric_limits<float>::infinity();	//TODO: test if this raises errors
 				rigid.trans.inv_mass = 0;
 			}
 			else {
@@ -77,7 +77,8 @@ World loadGameState(std::string location) {
 		{
 			std::string momentOfInertia = body.attribute("MOI").value();
 			if (momentOfInertia == "INFINITY") {
-				rigid.rot.momentOfInertia = std::numeric_limits<float>::infinity();
+				//rigid.rot.momentOfInertia = std::numeric_limits<float>::infinity(); <- TODO: This should work. But it doesn't. Tested by changing the Game.cpp rigidbody to have INFINITY mass instead of DBL_MAX. Things teleport.
+				rigid.rot.momentOfInertia = DBL_MAX;
 				rigid.rot.inv_MOI = 0;
 			}
 			else {
@@ -119,9 +120,35 @@ World loadGameState(std::string location) {
 			rigid.trans.accelaration = readVec(acc);
 		}
 		//load sides
-		
-		
+		{
+			std::string sides = body.attribute("Sides").value();
+			std::string vec;
+			std::vector<geo::vec> vectors;
 
-		std::string momentOfInertia
+			int i = 0;
+			while (i < sides.length()) {
+				vec += sides[i];
+				if (sides[i] == ')') {
+					vectors.push_back(readVec(vec));
+					vec = "";
+				}
+				i++;
+			}
+			//update shape points
+			rigid.shape.points.clear();
+			vectors.resize(vectors.size());
+			rigid.shape.points = vectors;
+			//update displayable points
+			rigid.displayable->set_sides(vectors);
+		}
+		
+		
+		//TODO:
+		//load texture directory
+		//load sound directory
+		//load camera
+		//load backgrounds
+		//...etc.
+
 	}
 }

@@ -9,6 +9,7 @@ namespace Graphics {
 		sf::Texture texture;
 		//TODO: include texture, sound, etc.
 
+	public:
 		Displayable(const geo::convex& convex) {
 			//initialize shape
 			this->convex.setPointCount(convex.points.size());
@@ -16,6 +17,15 @@ namespace Graphics {
 				this->convex.setPoint(i, { (float)convex.points[i].x, (float)convex.points[i].y });
 			}
 		}
+
+		//set convex shape's sides to rigidbody's
+		void set_sides(const std::vector<geo::vec>& vec) {
+			convex.setPointCount(vec.size());
+			for (int i = 0; i < vec.size(); i++) {
+				convex.setPoint(i, { (float)vec[i].x, (float)vec[i].y });
+			}
+		}
+
 
 
 	};
