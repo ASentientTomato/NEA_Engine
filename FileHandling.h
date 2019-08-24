@@ -1,4 +1,5 @@
 #pragma once
+#include "pugiconfig.hpp"
 #include "pugixml.hpp"	//external xml library
 #include "World.h"
 
@@ -13,6 +14,9 @@
 //plan:
 //fstream -> data, directory of texture/sounds
 //sfml -> loading from texture/sound directory
+
+//doubles and floats are to be stored in exponential notation.
+
 
 
 
@@ -60,14 +64,14 @@ World* loadGameState(std::string location) {
 
 	//read rigidbodies
 	std::vector<Rigidbody> objects;
-	for (pugi::xml_node body = save.child("Body"); body; body = body.next_sibling("Body")) {
+	for (pugi::xml_node body = save.child("Universe").child("Bodies").child("Body"); body; body = body.next_sibling("Body")) {
 		Rigidbody rigid;
 
 		{
 			//load mass
 			std::string mass = body.attribute("Mass").value();
 			if (mass == "INFINITY") {
-				rigid.trans.mass = DBL_MAX;	//std::numeric_limits<float>::infinity();	//TODO: test if this raises errors
+				rigid.trans.mass = DBL_MAX;	//std::numeric_limits<float>::infinity();	//TODO: test if this raises errors		<- it does
 				rigid.trans.inv_mass = 0;
 			}
 			else {
@@ -146,10 +150,10 @@ World* loadGameState(std::string location) {
 		}
 
 		//load texture
-		{
-			std::string textureLocation = body.attribute("Texture").value();
-			rigid.displayable->load_texture(textureLocation);
-		}
+		//{
+		//	std::string textureLocation = body.attribute("Texture").value();
+		//	rigid.displayable->load_texture(textureLocation);
+		//}
 
 		//commit object
 		objects.push_back(rigid);

@@ -13,6 +13,22 @@
 #define MAX_MISSED_TIME 0.05
 
 
+#include "World.h"
+#include "FileHandling.h"
+
+int main() {
+	World* world = loadGameState("data/save.xml");
+	if (world == NULL) {	//I'll make it return NULL in the case of an error.
+		std::cout << "failed to load";
+	}
+	else{
+		std::cout << "loaded successfully!\n";
+	}
+	system("PAUSE");
+}
+
+
+/*
 std::vector<Rigidbody> GLOBAL_BODIES;
 std::vector<sf::ConvexShape> GLOBAL_SHAPES;
 
@@ -330,3 +346,4 @@ int main()
 	//
 	return 0;
 }
+*/
