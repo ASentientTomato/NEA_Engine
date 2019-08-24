@@ -1,5 +1,4 @@
 #pragma once
-#include "pugiconfig.hpp"
 #include "pugixml.hpp"	//external xml library
 #include "World.h"
 
@@ -12,7 +11,7 @@
 //TODO: this should be opened as doubles, not as text!
 
 //plan:
-//fstream -> data, directory of texture/sounds
+//pugixml -> data, directory of texture/sounds
 //sfml -> loading from texture/sound directory
 
 //doubles and floats are to be stored in exponential notation.
@@ -21,25 +20,25 @@
 
 
 //convert string in the format
-//		"(x,y)"				//
+//		"(x,y)"				
 //		into a vector.
 geo::vec readVec(const std::string& str) {
 	geo::vec vec;
 
 	int i = 0;
 	std::string result;
-	for (; i < str.length(); i++) {
-		if (i == '(') { continue; }
-		if (i == ',') { break; }
-		result += result[i];
+	for (; i < str.length(); i++) {	//I wrote this code at 2am, so it was pretty buggy
+		if (str[i] == '(') continue; 
+		if (str[i] == ',') break;
+		result += str[i];
 	}
 
 	vec.x = std::stod(result.c_str());
 
 	result = "";
 	for (int j = i; j < str.length(); j++) {
-		if (i == ')') { continue; }
-		if (i == ',') { continue; }
+		if (str[j] == ')') { continue; }
+		if (str[j] == ',') { continue; }
 		result += str[j];
 	}
 	
@@ -49,8 +48,7 @@ geo::vec readVec(const std::string& str) {
 }
 
 World* loadGameState(std::string location) {
-
-
+	
 	pugi::xml_document save;
 	pugi::xml_parse_result result = save.load_file(location.c_str());
 	if (result) {
@@ -59,6 +57,7 @@ World* loadGameState(std::string location) {
 	else {
 		std::cout << "XML parsing error\n";
 	}
+
 
 	//TODO:load background
 
@@ -85,7 +84,7 @@ World* loadGameState(std::string location) {
 			std::string momentOfInertia = body.attribute("MOI").value();
 			if (momentOfInertia == "INFINITY") {
 				//rigid.rot.momentOfInertia = std::numeric_limits<float>::infinity(); <- TODO: This should work. But it doesn't. Tested by changing the Game.cpp rigidbody to have INFINITY mass instead of DBL_MAX. Things teleport.
-				rigid.rot.momentOfInertia = DBL_MAX;
+				rigid.rot.momentOfInertia = FLT_MAX;
 				rigid.rot.inv_MOI = 0;
 			}
 			else {
@@ -146,7 +145,7 @@ World* loadGameState(std::string location) {
 			vectors.resize(vectors.size());
 			rigid.shape.points = vectors;
 			//update displayable points
-			rigid.displayable->set_sides(vectors);
+			rigid.displayable.set_sides(vectors);
 		}
 
 		//load texture
@@ -156,6 +155,7 @@ World* loadGameState(std::string location) {
 		//}
 
 		//commit object
+		rigid.calculateCOM();	//TODO: maybe store this?
 		objects.push_back(rigid);
 	}
 
@@ -167,7 +167,7 @@ World* loadGameState(std::string location) {
 	//load camera
 	Camera camera;
 	{
-		pugi::xml_node cam = save.child("Camera");
+		pugi::xml_node cam = save.child("Universe").child("Camera");
 		std::string translate = cam.attribute("Translation").value();
 		std::string rotate = cam.attribute("Rotation").value();
 		std::string scale = cam.attribute("Zoom").value();

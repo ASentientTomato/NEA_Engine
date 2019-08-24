@@ -17,6 +17,7 @@ namespace Graphics {
 				this->convex.setPoint(i, { (float)convex.points[i].x, (float)convex.points[i].y });
 			}
 		}
+		Displayable() {};
 
 		//set convex shape's sides to rigidbody's
 		void set_sides(const std::vector<geo::vec>& vec) {

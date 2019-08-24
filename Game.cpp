@@ -20,10 +20,12 @@ int main() {
 	World* world = loadGameState("data/save.xml");
 	if (world == NULL) {	//I'll make it return NULL in the case of an error.
 		std::cout << "failed to load";
+		exit(-1);
 	}
-	else{
-		std::cout << "loaded successfully!\n";
-	}
+
+	std::cout << "loaded successfully!\n";
+	world->PrepareCamera({ 1920,1080 });
+	
 	system("PAUSE");
 }
 

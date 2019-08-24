@@ -24,7 +24,12 @@ std::vector<Rigidbody>* World::GetShapes() {
 
 World::World(std::vector<Rigidbody> shapes, Camera cam) {
 	this->WORLD_SHAPES = shapes;
-	cam.rebind(&this->WORLD_SHAPES);
+	this->Bind_Camera(cam);
+}
+
+void World::PrepareCamera(geo::vec screenDimensions){
+	camera.resize(screenDimensions);
+	camera.rebind((&WORLD_SHAPES));
 }
 
 //void World::Prepare() {

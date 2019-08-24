@@ -37,7 +37,7 @@ public:
 	void zoom(float zoomFactor, geo::vec centerOfZoom);
 	Shape applyMatrix(geo::Matrix3D<float> mat, const geo::vec& center);
 
-	Graphics::Displayable* displayable;
+	Graphics::Displayable displayable;
 };
 class Rigidbody : public Shape{
 public:

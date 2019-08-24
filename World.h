@@ -12,5 +12,7 @@ public:
 	void SetShapes(std::vector<Rigidbody> shapes);
 	std::vector<Rigidbody>* GetShapes();
 	World(std::vector<Rigidbody> shapes, Camera cam);
+	void PrepareCamera(geo::vec screenDimensions);
+
 //	void Prepare();
 };
