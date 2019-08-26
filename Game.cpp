@@ -25,7 +25,11 @@ int main() {
 
 	std::cout << "loaded successfully!\n";
 	world->PrepareCamera({ 1920,1080 });
-	
+
+
+	saveGameState(world, "data/save2.xml");
+
+
 	system("PAUSE");
 }
 

@@ -174,13 +174,18 @@ World* loadGameState(std::string location) {
 		camera.objectiveTranslate(readVec(translate));
 		camera.rotate(std::stof(rotate.c_str()));
 		camera.zoom(std::stof(scale.c_str()));
-
-		//I can see the camera's GLOBAL_SHAPES pointer causing problems - when the world object is passed back, this may become a dangling pointer?
 	}
 
 	//create world
-	World* world = new World(objects, camera);	//this >should< prevent any dangling pointer issues.
+	World* world = new World(objects, camera);
 	//TODO: don't forget to deallocate!
 
 	return world;
+}
+
+int saveGameState(World* world, std::string location) {
+	pugi::xml_document save = pugi::xml_document();
+	save.append_child("Universe");
+	save.save_file(location.c_str());
+	return 0;
 }
