@@ -94,8 +94,8 @@ World* loadGameState(std::string location) {
 				rigid.rot.inv_MOI = 0;
 			}
 			else {
-				rigid.trans.mass = std::stof(momentOfInertia.c_str());
-				rigid.trans.inv_mass = 1 / rigid.trans.mass;
+				rigid.rot.momentOfInertia = std::stof(momentOfInertia.c_str());
+				rigid.rot.inv_MOI = 1 / rigid.trans.mass;
 			}
 		}
 
@@ -131,6 +131,13 @@ World* loadGameState(std::string location) {
 			std::string acc = body.attribute("Accelaration").value();
 			rigid.trans.accelaration = readVec(acc);
 		}
+
+		//load (bool)clockwise
+		{
+			std::string clockwise = body.attribute("Clockwise").value();
+			rigid.shape.clockwise = (clockwise == "1");
+		}
+
 		//load sides
 		{
 			std::string sides = body.attribute("Sides").value();
@@ -202,7 +209,7 @@ int saveGameState(World* world, std::string location) {
 	//save camera
 	{
 		pugi::xml_attribute attribute = camera.append_attribute("Translation");
-		attribute.set_value(writeVec(world->camera.totalTranslation).c_str);
+		attribute.set_value(writeVec(world->camera.totalTranslation).c_str());
 		attribute = camera.append_attribute("Rotation");
 		attribute.set_value(world->camera.totalRotation);
 		attribute = camera.append_attribute("Zoom");
@@ -210,10 +217,30 @@ int saveGameState(World* world, std::string location) {
 	}
 	//save bodies
 	{
-		for(int )
+		pugi::xml_node body;
+		pugi::xml_attribute att;
+		for (int i = 0; i < world->size(); i++) {
+			body = bodies.append_child("Body");
+			//save attributes
+			body.append_attribute("Mass").set_value((*world)[i].trans.mass);
+			body.append_attribute("MOI").set_value((*world)[i].rot.momentOfInertia);
+			body.append_attribute("Angle").set_value((*world)[i].rot.angle);
+			body.append_attribute("Restitution").set_value((*world)[i].restitution);
+			body.append_attribute("DFriction").set_value((*world)[i].dynamic_friction);
+			body.append_attribute("SFriction").set_value((*world)[i].static_friction);
+			body.append_attribute("Velocity").set_value(writeVec((*world)[i].trans.velocity).c_str());
+			body.append_attribute("Accelaration").set_value(writeVec((*world)[i].trans.accelaration).c_str());
+			body.append_attribute("Clockwise").set_value((*world)[i].shape.clockwise);
+			//save sides
+			std::string sides = "";
+			for (const geo::vec& j : (*world)[i].shape.points) {
+				sides = sides += writeVec(j);
+			}
+			body.append_attribute("Sides").set_value(sides.c_str());
+
+		}
 	}
-
-
-	save.save_file(location.c_str());
-	return 0;
+	
+	if (save.save_file(location.c_str())) return 0;
+	else return -1;
 }

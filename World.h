@@ -1,7 +1,8 @@
 #pragma once
 #include "Physics.h"
 #include "Game.h"
-class World : public std::vector<Rigidbody> {	//ok, apparently this is very, very bad practice.
+class World {
+	std::vector<Rigidbody> WORLD_SHAPES;
 public:
 	Camera camera;
 
@@ -16,6 +17,12 @@ public:
 
 	//WORLD_SHAPES setter
 	void SetShapes(std::vector<Rigidbody> shapes);
+
+	//Get access to WORLD_SHAPES
+	Rigidbody& operator [] (int position);
+
+	//Get access to WORLD_SHAPES.size()
+	size_t size();
 
 	//Initialise world with shape list and camera
 	World(std::vector<Rigidbody> shapes, Camera cam);

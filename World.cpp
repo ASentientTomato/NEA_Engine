@@ -33,6 +33,10 @@ Rigidbody& World::operator [] (int position) {
 	return WORLD_SHAPES[position];
 }
 
+size_t World::size(){
+	return WORLD_SHAPES.size();
+}
+
 //void World::Prepare() {
 //	this->camera.rebind(&this->WORLD_SHAPES);
 //}

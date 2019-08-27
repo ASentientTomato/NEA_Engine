@@ -29,6 +29,7 @@ int main() {
 
 	saveGameState(world, "data/save2.xml");
 
+	delete world;
 
 	system("PAUSE");
 }
