@@ -6,24 +6,24 @@ namespace geo{
 	public:
 		double x;
 		double y;
-		vec operator+(const vec& v) const {
+		inline vec operator+(const vec& v) const {		//these inline declarations are likely already performed by the compiler, but why not use em anyway just in case
 			return vec{ x + v.x, y + v.y };
 		}
-		void operator+=(const vec& v) {
+		inline void operator+=(const vec& v) {
 			this->x += v.x;
 			this->y += v.y;
 		}
-		vec operator-(const vec& v) const {
+		inline vec operator-(const vec& v) const {
 			return vec{ x - v.x, y - v.y };
 		}
-		void operator-=(const vec& v) {
+		inline void operator-=(const vec& v) {
 			this->x -= v.x;
 			this->y -= v.y;
 		}
-		vec operator*(const double& d) const {
+		inline vec operator*(const double& d) const {
 			return vec{ x*d, y*d };
 		}
-		bool operator==(const vec& v) const {
+		inline bool operator==(const vec& v) const {
 			return (x == v.x && y == v.y);
 		}
 	};

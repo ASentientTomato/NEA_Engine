@@ -4,10 +4,10 @@
 
 namespace geo{
 	//----------------------------------------------VECTOR MATHS-----------------------------------------------
-	double dot(vec a, vec b) {
+	inline double dot(vec a, vec b) {
 		return a.x * b.x + a.y * b.y;
 	}
-	double magnitude(vec A) {
+	inline double magnitude(vec A) {
 		return sqrt(A.x * A.x + A.y * A.y);
 	}
 	void printVec(vec A) {

@@ -47,6 +47,12 @@ geo::vec readVec(const std::string& str) {
 	return vec;
 }
 
+//convert vector into string in the format 
+//				"(x,y)"					//
+inline std::string writeVec(const geo::vec& vec) {
+	return ("(" + std::to_string(vec.x) + "," + std::to_string(vec.y) + ")");
+}
+
 World* loadGameState(std::string location) {
 	
 	pugi::xml_document save;
@@ -182,10 +188,32 @@ World* loadGameState(std::string location) {
 
 	return world;
 }
-
+//save game state. returns negative number for error.
 int saveGameState(World* world, std::string location) {
+
+	//load file
 	pugi::xml_document save = pugi::xml_document();
-	save.append_child("Universe");
+	pugi::xml_node universe = save.append_child("Universe");
+
+	//create fields
+	pugi::xml_node camera = universe.append_child("Camera");
+	pugi::xml_node bodies = universe.append_child("Bodies");
+	
+	//save camera
+	{
+		pugi::xml_attribute attribute = camera.append_attribute("Translation");
+		attribute.set_value(writeVec(world->camera.totalTranslation).c_str);
+		attribute = camera.append_attribute("Rotation");
+		attribute.set_value(world->camera.totalRotation);
+		attribute = camera.append_attribute("Zoom");
+		attribute.set_value(world->camera.totalZoom);
+	}
+	//save bodies
+	{
+		for(int )
+	}
+
+
 	save.save_file(location.c_str());
 	return 0;
 }

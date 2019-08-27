@@ -4,11 +4,10 @@
 class Camera {
 private:
 	std::vector<Rigidbody>* world_state;
-
+public:
 	geo::vec totalTranslation = { 0,0 };
 	float totalRotation = 0;
 	float totalZoom = 1;
-public:
 	geo::vec center;//should be private (temporary)
 	std::vector<Shape> displayable;
 
@@ -23,4 +22,8 @@ public:
 	void objectiveTranslate(geo::vec vector);
 	void rotate(float theta);
 	void zoom(float zoomFactor);
+
+	geo::vec getTrans() { return totalTranslation; }
+	float getRot() { return totalRotation; }
+	float getZoom() { return totalZoom; }
 };

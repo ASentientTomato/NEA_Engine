@@ -6,8 +6,8 @@
 namespace geo {
 	//--------------------------------------------VECTOR MATHS--------------------------------------------
 
-	double dot(vec a, vec b);
-	double magnitude(vec A);
+	inline double dot(vec a, vec b);
+	inline double magnitude(vec A);
 	void printVec(vec A);
 
 	//--------------------------------------------MATRIX MATHS--------------------------------------------

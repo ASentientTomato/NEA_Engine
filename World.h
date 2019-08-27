@@ -1,18 +1,29 @@
 #pragma once
 #include "Physics.h"
 #include "Game.h"
-class World {
+class World{
 	std::vector<Rigidbody> WORLD_SHAPES;
+public:
 	Camera camera;
 
-public:
+	//Advance the simulation by one timestep of length dt
 	void Integrate(float dt);
+	
+	//Set camera
 	void Bind_Camera(Camera& cam);
-	void GenerateManifolds();
-	void SetShapes(std::vector<Rigidbody> shapes);
-	std::vector<Rigidbody>* GetShapes();
-	World(std::vector<Rigidbody> shapes, Camera cam);
-	void PrepareCamera(geo::vec screenDimensions);
 
-//	void Prepare();
+	//Run collision detection on all shapes in the world
+	void GenerateManifolds();
+
+	//WORLD_SHAPES setter
+	void SetShapes(std::vector<Rigidbody> shapes);
+
+	//Get access to WORLD_SHAPES
+	Rigidbody& operator [] (int position);
+
+	//Initialise world with shape list and camera
+	World(std::vector<Rigidbody> shapes, Camera cam);
+
+	//Initialise camera
+	void PrepareCamera(geo::vec screenDimensions);
 };
