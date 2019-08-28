@@ -1,8 +1,7 @@
 <Universe>
   <Camera Translation="(7,0)" Rotation="30" Zoom="0.9999999995"/>
   <Bodies>
-    <Body Mass="123" MOI="321" Angle="200" Restitution="0.7" DFriction="0.5" SFriction="0.5" Velocity="(1,2)" Accelaration="(0,1)" Sides="(1,2)(3,4)(5,6)(7,8)" TropicalFruit ="Pineapple"/>
-
-    <Body Mass="99999999999999999999999999999999" MOI="77" Angle="7" Restitution="0.5" DFriction="0.7" SFriction="0.7" Velocity="(7,7)" Accelaration="(7,7)" Sides="(7,7)(7.2,7)(7,0.7)" TropicalFruit ="Starfruit"/>
+    <Body Mass="10" MOI="10000" Angle="0" Restitution="0.7" DFriction="0.5" SFriction="0.5" Velocity="(0,0)" Accelaration="(0,0)" Sides="(100,100)(100,200)(200,200)(200,100)" Clockwise="1"/>
+    <Body Mass="INFINITY" MOI="INFINITY" Angle="0" Restitution="0.7" DFriction="0.5" SFriction="0.5" Velocity="(0,0)" Accelaration="(0,0)" Sides="(100,100)(200,100)(470,255)(327,800)(157,550)(100,300)" Clockwise ="1"/>
   </Bodies>
 </Universe>

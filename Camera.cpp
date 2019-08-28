@@ -22,9 +22,9 @@
 	void Camera::prepare() {
 		this->displayable.clear();
 		Shape shape;
-		Rigidbody temp;
-		for (Rigidbody i : (*world_state)) {
+		for (const Rigidbody& i : (*world_state)) {
 			shape.shape.points = i.shape.points;
+			shape.displayable = i.displayable;
 			displayable.push_back(shape);
 			//TOOD: implement better selection (far-away shapes need not be pushed here).
 		}
@@ -49,8 +49,12 @@
 		shape.zoom(this->totalZoom, this->center);
 
 		shape.rotate(this->totalRotation, this->center);
+
+		shape.displayable.set_sides(shape.shape.points);
+
 		return shape;
 	}
+
 
 	//pan camera relative to the camera
 	void Camera::relativeTranslate(geo::vec vector) {

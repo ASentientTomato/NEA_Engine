@@ -5,11 +5,12 @@
 namespace Graphics {
 
 	class Displayable {
+	public:
+
 		sf::ConvexShape convex;	//TODO: maybe replace with sprite.
 		sf::Texture texture;
 		//TODO: include texture, sound, etc.
 
-	public:
 		Displayable(const geo::convex& convex) {
 			//initialize shape
 			this->convex.setPointCount(convex.points.size());
@@ -31,7 +32,6 @@ namespace Graphics {
 			this->texture.loadFromFile(location);
 			this->convex.setTexture(&this->texture);
 		}
-
 	};
 
 	//TODO: add Graphics::Displayable creation functions (from file stream).

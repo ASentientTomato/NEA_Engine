@@ -16,23 +16,160 @@
 #include "World.h"
 #include "FileHandling.h"
 
-int main() {
+
+
+
+
+
+
+
+sf::Vector2f convertVector(geo::vec vector) {
+	return sf::Vector2f((float)vector.x, (float)vector.y);
+}
+
+using namespace geo;
+//-----------------------------------------------GRAPHICS-----------------------------------------------
+int main()
+{
+	//load world
 	World* world = loadGameState("data/save.xml");
 	if (world == NULL) {	//I'll make it return NULL in the case of an error.
 		std::cout << "failed to load";
 		exit(-1);
 	}
-
 	std::cout << "loaded successfully!\n";
 	world->PrepareCamera({ 1920,1080 });
 
 
-	saveGameState(world, "data/save2.xml");
+	//*****************EFFICIENCY STUFF*****************
+	const sf::Time timeStep = sf::seconds(1.0f / FPS);
+	sf::Time accumulator;
+	sf::Clock clock;
+	std::cout << "time step: " << timeStep.asSeconds() << " seconds" << std::endl;
+	std::cout << "1 pixel = 1 meter" << std::endl;
 
-	delete world;
+	//*****************GRAPHICS SETUP*****************
+	sf::ContextSettings settings;
+	settings.antialiasingLevel = 8;
+	sf::RenderWindow window(sf::VideoMode(SCREEN_X, SCREEN_Y), "test", sf::Style::Fullscreen, settings);
 
-	system("PAUSE");
+	while (window.isOpen()) {
+
+		//*****************EVENT HANDLING*****************
+		sf::Event event;
+
+		while (window.pollEvent(event))
+		{
+			// "close requested" event: we close the window
+			if (event.type == sf::Event::Closed)
+				window.close();
+
+			//put event handling here
+		}
+
+		if (accumulator.asSeconds() > 0.2f) {
+			accumulator = sf::seconds(0.2f);
+		}
+
+
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		accumulator += clock.getElapsedTime();
+		clock.restart();
+		//std::cout << accumulator.asSeconds() << std::endl;
+
+		//*****************UPDATE WORLD LOGIC*****************
+		//	ONLY APPLY FORCES WITHIN THIS LOOP!
+		while (accumulator > timeStep) {
+
+			//apply forces
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+				//GLOBAL_BODIES[0].translate(vec{ -1,0 });
+				(*world)[0].applyForce(vec{ -3000,0 });
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+				//square.translate(vec{ 1,0 });
+				(*world)[0].applyForce(vec{ 3000,0 });
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+				(*world)[0].applyForce(vec{ 0,-3000 });
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+				(*world)[0].applyForce(vec{ 0,3000 });
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
+				(*world)[0].rotate(0.03);
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
+				(*world)[0].rotate(-0.03);
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::X)) {
+				(*world)[0].trans.velocity = { 0,0 };
+				(*world)[0].trans.accelaration = { 0,0 };
+			}
+			bool physics = false;
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
+				physics = true;
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+				world->camera.objectiveTranslate(geo::vec{ 0, 2 });
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+				world->camera.objectiveTranslate(geo::vec{ 2, 0 });
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+				world->camera.objectiveTranslate(geo::vec{ 0, -2 });
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+				world->camera.objectiveTranslate(geo::vec{ -2, 0 });
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)) {
+				world->camera.rotate(0.05);
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::T)) {
+				world->camera.rotate(-0.05);
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::N)) {
+				world->camera.zoom(0.01);
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::B)) {
+				world->camera.zoom(-0.01);
+			}
+
+			accumulator -= timeStep;
+			window.clear(sf::Color::Black);
+
+
+			//time integration
+			world->Integrate(timeStep.asSeconds());
+
+
+
+			//**************************	PHYSICS		***************************
+
+			manifold myManifold;
+
+			world->GenerateManifolds();
+			if (physics) {
+				world->ResolveManifolds();
+			}
+
+			//**************************	DRAW SHAPES		***************************
+
+
+			world->camera.prepare();
+			for (const Shape& i : world->camera.displayable) {
+				window.draw(i.displayable.convex);
+			}
+
+			window.display();
+		}
+
+	}
+	//
+	return 0;
 }
+
 
 
 /*

@@ -275,6 +275,8 @@ void resolveManifold(manifold man) {
 
 	}
 	
+	
+
 }
 
 
