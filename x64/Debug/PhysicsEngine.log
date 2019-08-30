@@ -1,0 +1,19 @@
+﻿  Camera.cpp
+c:\users\tal\documents\visual studio 2017\projects\physicsengine\physicsengine\physics.h(27): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\tal\documents\visual studio 2017\projects\physicsengine\physicsengine\physics.h(49): warning C4305: 'initializing': truncation from 'double' to 'float'
+  Game.cpp
+c:\users\tal\documents\visual studio 2017\projects\physicsengine\physicsengine\physics.h(27): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\tal\documents\visual studio 2017\projects\physicsengine\physicsengine\physics.h(49): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\tal\documents\visual studio 2017\projects\physicsengine\physicsengine\filehandling.h(100): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\tal\documents\visual studio 2017\projects\physicsengine\physicsengine\game.cpp(96): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\tal\documents\visual studio 2017\projects\physicsengine\physicsengine\game.cpp(99): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\tal\documents\visual studio 2017\projects\physicsengine\physicsengine\game.cpp(122): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\tal\documents\visual studio 2017\projects\physicsengine\physicsengine\game.cpp(125): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\tal\documents\visual studio 2017\projects\physicsengine\physicsengine\game.cpp(128): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\tal\documents\visual studio 2017\projects\physicsengine\physicsengine\game.cpp(131): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\tal\documents\visual studio 2017\projects\physicsengine\physicsengine\game.cpp(145): warning C4101: 'myManifold': unreferenced local variable
+  World.cpp
+c:\users\tal\documents\visual studio 2017\projects\physicsengine\physicsengine\physics.h(27): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\tal\documents\visual studio 2017\projects\physicsengine\physicsengine\physics.h(49): warning C4305: 'initializing': truncation from 'double' to 'float'
+  Generating Code...
+  PhysicsEngine.vcxproj -> C:\Users\tal\Documents\Visual Studio 2017\Projects\PhysicsEngine\x64\Debug\PhysicsEngine.exe

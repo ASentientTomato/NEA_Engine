@@ -18,11 +18,6 @@
 
 
 
-
-
-
-
-
 sf::Vector2f convertVector(geo::vec vector) {
 	return sf::Vector2f((float)vector.x, (float)vector.y);
 }
@@ -51,7 +46,7 @@ int main()
 	//*****************GRAPHICS SETUP*****************
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 8;
-	sf::RenderWindow window(sf::VideoMode(SCREEN_X, SCREEN_Y), "test", sf::Style::Fullscreen, settings);
+	sf::RenderWindow window(sf::VideoMode(SCREEN_X, SCREEN_Y), "test");//, sf::Style::Fullscreen, settings);
 
 	while (window.isOpen()) {
 

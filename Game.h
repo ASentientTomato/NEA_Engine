@@ -7,7 +7,8 @@ private:
 public:
 	geo::vec totalTranslation = { 0,0 };
 	float totalRotation = 0;
-	float totalZoom = 1;
+	//initial zoom must be set!
+	float totalZoom = 0;
 	geo::vec center;//should be private (temporary)
 	std::vector<Shape> displayable;
 
