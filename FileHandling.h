@@ -97,7 +97,7 @@ World* loadGameState(std::string location) {
 			}
 			else {
 				rigid.rot.momentOfInertia = std::stof(momentOfInertia.c_str());
-				rigid.rot.inv_MOI = 1 / rigid.trans.mass;
+				rigid.rot.inv_MOI = 1 / rigid.rot.momentOfInertia;
 			}
 		}
 

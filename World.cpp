@@ -20,18 +20,18 @@ void World::GenerateManifolds() {
 	manifold myManifold;
 	std::vector<manifold> manifolds;
 	
-	for (Rigidbody& i : WORLD_SHAPES) {
-		for (Rigidbody& j : WORLD_SHAPES) {
-			if (&i == &j)continue;
-			geo::vec dist = geo::getCollisionData(i.shape, j.shape, man, inc, ref);
+	for (int i = 0; i < WORLD_SHAPES.size(); i++) {
+		for (int j = i + 1; j < WORLD_SHAPES.size(); j++) {
+			geo::vec dist = geo::getCollisionData(WORLD_SHAPES[i].shape, WORLD_SHAPES[j].shape, man, inc, ref);
 			if (dist.x == 0 && dist.y == 0) {
 				myManifold.col = man;
-				myManifold.A = &i;
-				myManifold.B = &j;
+				myManifold.A = &(WORLD_SHAPES[i]);
+				myManifold.B = &(WORLD_SHAPES[j]);
 				manifolds.push_back(myManifold);
 			}
 		}
 	}
+
 	this->manifolds = manifolds;
 
 }

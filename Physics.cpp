@@ -3,7 +3,7 @@
 
 
 //from 0 to 1, how much overlapping shapes should be translated to prevent them from overlapping
-#define CORRECTION_FACTOR 0.5	
+#define CORRECTION_FACTOR 0.1
 
 ///////////////////////////////////////////////////////////////////	Maths ///////////////////////////////////////////////////////////////////
 
@@ -141,7 +141,7 @@ void Rigidbody::rotate(float radians) {
 
 double Rigidbody::getArea() {
 	double area = 0;
-	int j = this->shape.points.size() - 1;
+	size_t j = this->shape.points.size() - 1;
 	for (int i = 0; i < this->shape.points.size(); i++) {
 		area += (this->shape.points[j].x + this->shape.points[i].x) * (this->shape.points[j].y - this->shape.points[i].y);
 		j = i;
@@ -220,7 +220,7 @@ void resolveManifold(manifold man) {
 		//translate the shapes by some correction factor, to ensure stability (decrease jittering).
 		geo::vec alpha = man.col.contacts[0].normal * ((man.col.contacts[0].penetration * CORRECTION_FACTOR) / (man.A->trans.mass + man.B->trans.mass));
 		man.B->translate(alpha * man.A->trans.mass);
-		man.A->translate(alpha * man.B->trans.mass);
+		man.A->translate(alpha * -man.B->trans.mass);//oops
 
 
 		geo::vec rv = man.B->trans.velocity - man.A->trans.velocity;								//calculate relative velocity

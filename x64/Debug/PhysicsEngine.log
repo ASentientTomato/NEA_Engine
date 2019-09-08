@@ -1,19 +1,23 @@
-﻿  Camera.cpp
-c:\users\tal\documents\visual studio 2017\projects\physicsengine\physicsengine\physics.h(27): warning C4305: 'initializing': truncation from 'double' to 'float'
-c:\users\tal\documents\visual studio 2017\projects\physicsengine\physicsengine\physics.h(49): warning C4305: 'initializing': truncation from 'double' to 'float'
+﻿  pch.cpp
+  Camera.cpp
+  geometrytools.cpp
+C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\geometrytools.cpp(199,30): warning C4267:  '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\geometrytools.cpp(280,37): warning C4267:  'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\geometrytools.cpp(448,61): warning C4267:  'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\geometrytools.cpp(464,85): warning C4267:  'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\geometrytools.cpp(477,56): warning C4267:  'argument': conversion from 'size_t' to 'int', possible loss of data
   Game.cpp
-c:\users\tal\documents\visual studio 2017\projects\physicsengine\physicsengine\physics.h(27): warning C4305: 'initializing': truncation from 'double' to 'float'
-c:\users\tal\documents\visual studio 2017\projects\physicsengine\physicsengine\physics.h(49): warning C4305: 'initializing': truncation from 'double' to 'float'
-c:\users\tal\documents\visual studio 2017\projects\physicsengine\physicsengine\filehandling.h(100): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\tal\documents\visual studio 2017\projects\physicsengine\physicsengine\game.cpp(96): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\tal\documents\visual studio 2017\projects\physicsengine\physicsengine\game.cpp(99): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\tal\documents\visual studio 2017\projects\physicsengine\physicsengine\game.cpp(122): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\tal\documents\visual studio 2017\projects\physicsengine\physicsengine\game.cpp(125): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\tal\documents\visual studio 2017\projects\physicsengine\physicsengine\game.cpp(128): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\tal\documents\visual studio 2017\projects\physicsengine\physicsengine\game.cpp(131): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\tal\documents\visual studio 2017\projects\physicsengine\physicsengine\game.cpp(145): warning C4101: 'myManifold': unreferenced local variable
+C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\geometrytools.cpp(364,9): warning C4101:  'closest': unreferenced local variable
+C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Game.cpp(144,28): warning C4305:  'argument': truncation from 'double' to 'float'
+C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Game.cpp(147,29): warning C4305:  'argument': truncation from 'double' to 'float'
+C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Game.cpp(170,30): warning C4305:  'argument': truncation from 'double' to 'float'
+C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Game.cpp(173,31): warning C4305:  'argument': truncation from 'double' to 'float'
+C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Game.cpp(176,28): warning C4305:  'argument': truncation from 'double' to 'float'
+C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Game.cpp(179,29): warning C4305:  'argument': truncation from 'double' to 'float'
+  Physics.cpp
+C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Game.cpp(193,13): warning C4101:  'myManifold': unreferenced local variable
+  pugixml.cpp
   World.cpp
-c:\users\tal\documents\visual studio 2017\projects\physicsengine\physicsengine\physics.h(27): warning C4305: 'initializing': truncation from 'double' to 'float'
-c:\users\tal\documents\visual studio 2017\projects\physicsengine\physicsengine\physics.h(49): warning C4305: 'initializing': truncation from 'double' to 'float'
   Generating Code...
-  PhysicsEngine.vcxproj -> C:\Users\tal\Documents\Visual Studio 2017\Projects\PhysicsEngine\x64\Debug\PhysicsEngine.exe
+C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Physics.cpp(195,69): warning C4244:  '+=': conversion from 'double' to 'float', possible loss of data
+  PhysicsEngine.vcxproj -> C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\x64\Debug\PhysicsEngine.exe

@@ -24,7 +24,7 @@ struct translation {
 };
 struct rotation {
 	float momentOfInertia = 10000;
-	float inv_MOI = 0.0001;
+	float inv_MOI = 0.0001f;
 	float angularVelocity = 0;//radians per second
 	float accelaration = 0;
 	float angle = 0;
@@ -46,9 +46,9 @@ public:
 	geo::vec com;
 	//center of mass relative to vertex at 0, when shape is not rotated
 	
-	float restitution = 0.7;
-	float static_friction = 0.5;
-	float dynamic_friction = 0.5;
+	float restitution = 0.7f;
+	float static_friction = 0.5f;
+	float dynamic_friction = 0.5f;
 
 	geo::vec getCOM();
 	void calculateCOM();
