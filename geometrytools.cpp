@@ -314,7 +314,7 @@ namespace geo{
 	vec getCollisionData(const convex &A, const convex &B, collision& man, line& incline, line& refline)
 		//incline and refline are here for testing
 	{
-
+		
 		//pick arbitrary initial simplex
 		simplexVec S;
 		S.count = 1;	//TODO: this function is structured in a really dumb way.
@@ -407,7 +407,8 @@ namespace geo{
 					double a = abs(dot(lineB * (1 / magnitude(lineB)), penetrationNormal));
 					double b = abs(dot(lineA * (1 / magnitude(lineA)), penetrationNormal));
 
-					//fixing rounding error problems:
+					//fixing rounding 
+				problems:
 					if (a < 0.000000001) {
 						a = 0;
 					}

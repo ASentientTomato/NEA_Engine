@@ -14,7 +14,7 @@ public:
 
 	//initializer
 	Camera(std::vector<Rigidbody>* world_state, geo::vec screen_size);
-	Camera() {}
+	Camera() {}	//TODO: remove this.
 
 	//change world camera points to
 	void rebind(std::vector<Rigidbody>* world_state);
@@ -44,4 +44,9 @@ public:
 	geo::vec getTrans() { return totalTranslation; }
 	float getRot() { return totalRotation; }
 	float getZoom() { return totalZoom; }
+
+	//get original position from translated camera position
+	Shape inverse(Shape shape);
+
+	geo::vec inverse(geo::vec vec);
 };

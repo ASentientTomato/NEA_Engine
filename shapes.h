@@ -55,7 +55,7 @@ namespace geo{
 
 	typedef struct collision {
 		contact contacts[2];
-		unsigned int contactcount;
+		unsigned int contactcount = 0;
 		bool aIsReference;
 	} collision;
 }

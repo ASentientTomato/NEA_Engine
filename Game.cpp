@@ -16,13 +16,25 @@
 #include "World.h"
 #include "FileHandling.h"
 
+
+
+
+
+
+
+
+
+
 /*
-inv_MOI calculated wrong
-Added "dropped frames" warning to check if I'm being too slow
+add "int situation" in world - only things in the same situation need to have collision detection run on them. This can be controlled by an enum.
+remove camera from world.
+add "string tosave" to world for saving additional data.
+remove "displayable" from world/rigidbody. This should be up for the user to render.
+add world creation tools.
 */
 //n must be even
 geo::convex generatePolygon(geo::vec side, int n) {
-	float internalAngle = (n - 2) * 3.14f;
+	float internalAngle = (n - 2) * 3.14159265358979323846f;
 	internalAngle *= (1 / (float)n);
 	float sine = std::sin(internalAngle);
 	float cosine = std::cos(internalAngle);
@@ -41,26 +53,36 @@ geo::convex generatePolygon(geo::vec side, int n) {
 
 void applyGravity(World& world) {
 	for (int i = 0; i < world.size(); i++) {
-		//TODO: only perform this on large bodies, by providing a list instead of the whole world
+		//TODO: only perform this on large bodies w/ small bodies, by providing a list instead of the whole world
 		//alternatively, extend the world class to implement this method.
-		//also, there's a more complicated equation for gravity which I don't remember - this is just the proportionality.
 		for (int j = i + 1; j < world.size(); j++) {
 			geo::vec dist = world[i].getCOM() - world[j].getCOM();
 			//j->i
 			double magnitude = geo::magnitude(dist);
-			double mag = magnitude;
 			magnitude = 1 / magnitude;
-			//dist = dist * magnitude;
-			//magnitude = magnitude * magnitude;
-			//magnitude *= (world[i].trans.mass + world[j].trans.mass);
-			mag = mag * mag;
-			mag = (world[i].trans.mass + world[j].trans.mass) / mag;
+			dist = dist * magnitude;
+			magnitude *= magnitude;
 
-			dist = dist * mag;
+			double top = world[i].trans.mass * world[j].trans.mass * 6.67408e-11;	//gravitational constant
+
+			magnitude = top * magnitude;
+			dist = dist * magnitude;
+
 			geo::printVec(dist);
 			world[j].applyForce(dist);
 			world[i].applyForce(dist * -1);
 		}
+	}
+}
+
+geo::vec getClickPosition(sf::Window* window, Camera* cam, sf::Mouse::Button button) {
+	if (sf::Mouse::isButtonPressed(button)) {
+		sf::Vector2i position = sf::Mouse::getPosition(*window);
+		geo::vec pos = cam->inverse({ (double)position.x, (double)position.y });
+		return pos;
+	}
+	else {
+		return { NULL, NULL };
 	}
 }
 
@@ -73,6 +95,9 @@ using namespace geo;
 //-----------------------------------------------GRAPHICS-----------------------------------------------
 int main()
 {
+	geo::vec screenDimensions = { SCREEN_X, SCREEN_Y };
+
+
 	//load world
 	World* world = loadGameState("data/save.xml");
 	if (world == NULL) {	//I'll make it return NULL in the case of an error.
@@ -80,8 +105,12 @@ int main()
 		exit(-1);
 	}
 	std::cout << "loaded successfully!\n";
-	world->PrepareCamera({ 1920,1080 });
+	Camera camera = loadCamera("data/save.xml", world->getDataAddress());
+	camera.resize(screenDimensions);
 
+	sf::Font font;
+	font.loadFromFile("/data/fonts/AGENCYR.TTF");
+	std::vector<sf::Text> text;
 
 	//*****************EFFICIENCY STUFF*****************
 	const sf::Time timeStep = sf::seconds(1.0f / FPS);
@@ -128,17 +157,17 @@ int main()
 			//apply forces
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
 				//GLOBAL_BODIES[0].translate(vec{ -1,0 });
-				(*world)[0].applyForce(vec{ -3000,0 });
+				(*world)[0].applyForce(vec{ -6000,0 });
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
 				//square.translate(vec{ 1,0 });
-				(*world)[0].applyForce(vec{ 3000,0 });
+				(*world)[0].applyForce(vec{ 6000,0 });
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-				(*world)[0].applyForce(vec{ 0,-3000 });
+				(*world)[0].applyForce(vec{ 0,-6000 });
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-				(*world)[0].applyForce(vec{ 0,3000 });
+				(*world)[0].applyForce(vec{ 0,6000 });
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
 				(*world)[0].rotate(0.03);
@@ -155,28 +184,96 @@ int main()
 				physics = true;
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-				world->camera.objectiveTranslate(geo::vec{ 0, 2 });
+				camera.objectiveTranslate(geo::vec{ 0, 2 });
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-				world->camera.objectiveTranslate(geo::vec{ 2, 0 });
+				camera.objectiveTranslate(geo::vec{ 2, 0 });
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-				world->camera.objectiveTranslate(geo::vec{ 0, -2 });
+				camera.objectiveTranslate(geo::vec{ 0, -2 });
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-				world->camera.objectiveTranslate(geo::vec{ -2, 0 });
+				camera.objectiveTranslate(geo::vec{ -2, 0 });
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)) {
-				world->camera.rotate(0.05);
+				camera.rotate(0.05);
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::T)) {
-				world->camera.rotate(-0.05);
+				camera.rotate(-0.05);
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::N)) {
-				world->camera.zoom(0.01);
+				camera.zoom(0.01);
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::B)) {
-				world->camera.zoom(-0.01);
+				camera.zoom(-0.01);
+			}
+			
+			
+			//world editor
+			static Rigidbody sh;
+			static bool enter_down = false;
+
+			if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+				sf::Vector2i position = sf::Mouse::getPosition(window);
+				//sf::Vector2i position = sf::Mouse::getPosition();
+				geo::vec vec = { position.x,position.y };
+				vec = camera.inverse(vec);
+				//TODO: handle concave shapes properly.
+				bool found = false;
+				for (geo::vec& v : sh.points) {
+					if (v == vec) {
+						found = true;
+						break;
+					}
+				}
+				if(!found){
+					sh.points.push_back(vec);
+				}
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
+				if (!enter_down) {
+					enter_down = true;
+
+					if(sh.getArea() > 0){
+						sh.trans.mass = DBL_MAX;
+						sh.trans.inv_mass = 0;
+						sh.rot.momentOfInertia = FLT_MAX;
+						sh.rot.inv_MOI = 0;
+						sh.calculateCOM();
+						sh.clockwise = isClockwise(sh);
+
+						sh.displayable.set_sides(sh.points);
+
+						world->push_back(sh);
+
+						sh = Rigidbody();
+					}
+				}
+			}
+			else {
+				enter_down = false;
+			}
+
+			//Allow a shape to be selected
+			static Rigidbody* selected = NULL;
+			{
+				geo::vec v;
+				v = getClickPosition(&window, &camera, sf::Mouse::Button::Right);
+				if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right)) {
+					for (int i = 0; i < world->size(); i++) {
+						(*world)[i].displayable.convex.setFillColor(sf::Color::White);
+					}
+					selected = NULL;
+					for (int i = 0; i < world->size(); i++) {
+						if (isPointInside(v, &world->operator[](i))) {
+							selected = &(*world)[i];
+							break;
+						}
+					}
+				}
+				else {
+					selected = NULL;
+				}
 			}
 
 			accumulator -= timeStep;
@@ -190,19 +287,42 @@ int main()
 
 			//**************************	PHYSICS		***************************
 
+
+
+
+			if (text.size() < 1) {
+				sf::Text t;
+				t.setFont(font);
+				t.setString("testing testing 123");
+				t.setCharacterSize(240);
+				t.setFillColor(sf::Color::Red);
+				text.push_back(t);
+				std::cout << std::endl <<"HELLO" << std::endl;
+			}
+
+
 			manifold myManifold;
 
-			world->GenerateManifolds();
-			if (physics) {
-				world->ResolveManifolds();
+			if(physics){
+				applyGravity(*world);
 			}
+
+			world->GenerateManifolds();
+			world->ResolveManifolds();
 
 			//**************************	DRAW SHAPES		***************************
 
 
-			world->camera.prepare();
-			for (const Shape& i : world->camera.displayable) {
+			camera.prepare();
+			for (const Shape& i : camera.displayable) {
 				window.draw(i.displayable.convex);
+			}
+			for (const sf::Text& i : text) {
+				window.draw(i);
+			}
+			
+			if (selected != NULL) {
+				selected->displayable.convex.setFillColor(sf::Color::Green);
 			}
 
 			window.display();

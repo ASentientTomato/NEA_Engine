@@ -10,11 +10,13 @@ struct manifold {
 	Rigidbody* A;
 	Rigidbody* B;
 	geo::collision col;
+	manifold();
 };
 
 geo::vec cross(geo::vec V, double x);
 geo::vec cross(double x, geo::vec V);
 double cross(geo::vec A, geo::vec B);
+
 
 struct translation {
 	double mass;
@@ -29,13 +31,15 @@ struct rotation {
 	float accelaration = 0;
 	float angle = 0;
 };
-class Shape {
+class Shape : public geo::convex{
 public:
-	geo::convex shape;
 	void translate(geo::vec translationVector);
 	void rotate(float radians, const geo::vec& centerOfRotation);
 	void zoom(float zoomFactor, geo::vec centerOfZoom);
 	Shape applyMatrix(geo::Matrix3D<float> mat, const geo::vec& center);
+	int next(int i);
+	int previous(int i);
+	geo::vec& operator[](int i);
 
 	Graphics::Displayable displayable;
 };
@@ -64,3 +68,9 @@ public:
 };
 
 void resolveManifold(manifold man);
+
+
+
+//returns true if shape's winding is clockwise
+//works for all shapes
+bool isClockwise(Shape sh);

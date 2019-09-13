@@ -23,7 +23,7 @@
 		this->displayable.clear();
 		Shape shape;
 		for (const Rigidbody& i : (*world_state)) {
-			shape.shape.points = i.shape.points;
+			shape.points = i.points;
 			shape.displayable = i.displayable;
 			displayable.push_back(shape);
 			//TOOD: implement better selection (far-away shapes need not be pushed here).
@@ -38,21 +38,35 @@
 	Shape Camera::project(const Shape& rigid) {
 		Shape shape = rigid;
 
-		//translate->zoom works fine, however:
-		//rotation also rotates translation vector.
-		//I could rotate the translation vector each time translate is called by -theta, creating a werid curve that loops around to being straight when translate() is called.
-		//However, I realized a more elegant solution would be to transpose matrices instead.
-
-		//scratch that that's a terrible solution
-
 		shape.translate(this->totalTranslation);
 		shape.zoom(this->totalZoom, this->center);
 
 		shape.rotate(this->totalRotation, this->center);
 
-		shape.displayable.set_sides(shape.shape.points);
+		shape.displayable.set_sides(shape.points);
 
 		return shape;
+	}
+
+	
+	Shape Camera::inverse(Shape shape) {
+
+		shape.rotate(totalRotation * -1, center);
+		shape.zoom(1 / totalZoom, center);
+
+		//this will probably not work...
+		shape.translate(totalTranslation * -1);
+	
+		return shape;
+	}
+
+	geo::vec Camera::inverse(geo::vec vec) {
+		Shape s;
+		s.points.push_back(vec);
+		s = this->inverse(s);
+		return s.points[0];
+
+		//TODO: this is a bit of a silly method. Change it.
 	}
 
 
@@ -89,6 +103,8 @@
 		}
 		//TODO: zoom backgrounds
 	}
+
+
 
 //TODO: rotation not working.
 

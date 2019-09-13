@@ -5,14 +5,10 @@ class World {
 	std::vector<Rigidbody> WORLD_SHAPES;
 public:
 	std::vector<manifold> manifolds;
-	Camera camera;
 
 	//Advance the simulation by one timestep of length dt
 	void Integrate(float dt);
 	
-	//Set camera
-	void Bind_Camera(Camera& cam);
-
 	//Run collision detection on all shapes in the world
 	void GenerateManifolds();
 
@@ -25,15 +21,15 @@ public:
 	//Get access to WORLD_SHAPES
 	Rigidbody& operator [] (int position);
 
+	//Get address of WORLD_SHAPES
+	std::vector<Rigidbody>* getDataAddress();
+
 	void push_back(Rigidbody r);
 
 	//Get access to WORLD_SHAPES.size()
 	size_t size();
 
-	//Initialise world with shape list and camera
-	World(std::vector<Rigidbody> shapes, Camera cam);
-
-	//Initialise camera
-	void PrepareCamera(geo::vec screenDimensions);
+	//Initialise world with shape list
+	World(std::vector<Rigidbody> shapes);
 };
 

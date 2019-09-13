@@ -1,7 +1,9 @@
 <Universe>
-  <Camera Translation="(0,0)" Rotation="0" Zoom="1"/>
+  <Graphics>
+    <Camera Translation="(0,0)" Rotation="0" Zoom="1"/>
+  </Graphics>
   <Bodies>
-    <Body Mass="10" MOI="10000" Angle="0" Restitution="0.7" DFriction="0.5" SFriction="0.5" Velocity="(0,0)" Accelaration="(0,0)" Sides="(100,100)(100,200)(200,200)(200,100)" Clockwise="1"/>
-    <Body Mass="INFINITY" MOI="INFINITY" Angle="0" Restitution="0.7" DFriction="0.5" SFriction="0.5" Velocity="(0,0)" Accelaration="(0,0)" Sides="(100,100)(200,100)(470,255)(327,800)(157,550)(100,300)" Clockwise ="1"/>
+    <Body Mass="10" MOI="10000" Angle="0" Restitution="0.7" DFriction="0.5" SFriction="0.5" Velocity="(0,0)" Accelaration="(0,0)" Sides="(100,100)(100,200)(200,200)(200,100)"/>
+    <Body Mass="I1e19" MOI="INFINITY" Angle="0" Restitution="0.7" DFriction="0.5" SFriction="0.5" Velocity="(0,0)" Accelaration="(0,0)" Sides="(100,100)(200,100)(470,255)(327,800)(157,550)(100,300)"/>
   </Bodies>
 </Universe>

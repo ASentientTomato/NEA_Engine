@@ -55,6 +55,70 @@ inline std::string writeVec(const geo::vec& vec) {
 	return ("(" + std::to_string(vec.x) + "," + std::to_string(vec.y) + ")");
 }
 
+
+Camera loadCamera(std::string location, std::vector<Rigidbody>* world) {
+	pugi::xml_document save;
+	pugi::xml_parse_result result = save.load_file(location.c_str());
+	if (result) {
+		std::cout << "XML parsed successfully\n";
+	}
+	else {
+		std::cout << "XML parsing error\n";
+	}
+	//load camera
+	Camera camera;
+	{
+		pugi::xml_node cam = save.child("Universe").child("Graphics").child("Camera");
+		if (cam == NULL) {
+			std::cout << "Failed to load camera." << std::endl;
+			exit(-1);
+		}
+		std::string translate = cam.attribute("Translation").value();
+		std::string rotate = cam.attribute("Rotation").value();
+		std::string scale = cam.attribute("Zoom").value();
+		camera.objectiveTranslate(readVec(translate));
+		camera.rotate(std::stof(rotate.c_str()));
+		camera.zoom(std::stof(scale.c_str()));
+		camera.rebind(world);
+	}
+	return camera;
+}
+
+/*
+int saveCamera(Camera cam, std::string location) {
+
+	pugi::xml_document save;
+	pugi::xml_parse_result result = save.load_file(location.c_str());
+	if (result) {
+		std::cout << "XML parsed successfully\n";
+	}
+	else {
+		std::cout << "XML parsing error\n";
+	}
+
+	pugi::xml_node test = save.child("Universe").child("Graphics").child("Camera");
+	if (test || test.empty()) {
+		
+	}
+
+	pugi::xml_node universe = save.append_child("Universe");
+
+	pugi::xml_node camera = universe.append_child("Camera");
+
+	//save camera
+	{	
+		pugi::xml_attribute attribute = camera.append_attribute("Translation");
+		attribute.set_value(writeVec(cam.totalTranslation).c_str());
+		attribute = camera.append_attribute("Rotation");
+		attribute.set_value(cam.totalRotation);
+		attribute = camera.append_attribute("Zoom");
+		attribute.set_value(cam.totalZoom);
+	}
+}
+
+*/
+
+
 World* loadGameState(std::string location) {
 	
 	pugi::xml_document save;
@@ -77,8 +141,9 @@ World* loadGameState(std::string location) {
 		{
 			//load mass
 			std::string mass = body.attribute("Mass").value();
-			if (mass == "INFINITY") {
-				rigid.trans.mass = DBL_MAX;	//std::numeric_limits<float>::infinity();	//TODO: test if this raises errors		<- it does
+			if (mass[0] == 'I') {
+				mass[0] = '0';
+				rigid.trans.mass = std::stof(mass);	//std::numeric_limits<float>::infinity();	//TODO: test if this raises errors		<- it does
 				rigid.trans.inv_mass = 0;
 			}
 			else {
@@ -134,12 +199,6 @@ World* loadGameState(std::string location) {
 			rigid.trans.accelaration = readVec(acc);
 		}
 
-		//load (bool)clockwise
-		{
-			std::string clockwise = body.attribute("Clockwise").value();
-			rigid.shape.clockwise = (clockwise == "1");
-		}
-
 		//load sides
 		{
 			std::string sides = body.attribute("Sides").value();
@@ -156,12 +215,18 @@ World* loadGameState(std::string location) {
 				i++;
 			}
 			//update shape points
-			rigid.shape.points.clear();
+			rigid.points.clear();
 			vectors.resize(vectors.size());
-			rigid.shape.points = vectors;
+			rigid.points = vectors;
 			//update displayable points
 			rigid.displayable.set_sides(vectors);
 		}
+
+		//load (bool)clockwise
+		{
+			rigid.clockwise = isClockwise(rigid);
+		}
+
 
 		//load texture
 		//{
@@ -178,53 +243,37 @@ World* loadGameState(std::string location) {
 	//load sound directory
 	//load backgrounds
 	//...etc.
-	
-	//load camera
-	Camera camera;
-	{
-		pugi::xml_node cam = save.child("Universe").child("Camera");
-		std::string translate = cam.attribute("Translation").value();
-		std::string rotate = cam.attribute("Rotation").value();
-		std::string scale = cam.attribute("Zoom").value();
-		camera.objectiveTranslate(readVec(translate));
-		camera.rotate(std::stof(rotate.c_str()));
-		camera.zoom(std::stof(scale.c_str()));
-	}
 
 	//create world
-	World* world = new World(objects, camera);
+	World* world = new World(objects);
 	//TODO: don't forget to deallocate!
 
 	return world;
 }
 //save game state. returns negative number for error.
-int saveGameState(World* world, std::string location) {
+int saveGameState(World* world, std::string location, Camera& cam) {
 
 	//load file
 	pugi::xml_document save = pugi::xml_document();
 	pugi::xml_node universe = save.append_child("Universe");
 
 	//create fields
-	pugi::xml_node camera = universe.append_child("Camera");
 	pugi::xml_node bodies = universe.append_child("Bodies");
-	
-	//save camera
-	{
-		pugi::xml_attribute attribute = camera.append_attribute("Translation");
-		attribute.set_value(writeVec(world->camera.totalTranslation).c_str());
-		attribute = camera.append_attribute("Rotation");
-		attribute.set_value(world->camera.totalRotation);
-		attribute = camera.append_attribute("Zoom");
-		attribute.set_value(world->camera.totalZoom);
-	}
+
 	//save bodies
 	{
 		pugi::xml_node body;
 		pugi::xml_attribute att;
 		for (int i = 0; i < world->size(); i++) {
+
 			body = bodies.append_child("Body");
 			//save attributes
-			body.append_attribute("Mass").set_value((*world)[i].trans.mass);
+			std::string mass = std::to_string((*world)[i].trans.mass);
+			if ((*world)[i].trans.inv_mass == 0) {
+				mass.insert(0, "I");
+			}
+			
+			body.append_attribute("Mass").set_value(mass.c_str());
 			body.append_attribute("MOI").set_value((*world)[i].rot.momentOfInertia);
 			body.append_attribute("Angle").set_value((*world)[i].rot.angle);
 			body.append_attribute("Restitution").set_value((*world)[i].restitution);
@@ -232,17 +281,32 @@ int saveGameState(World* world, std::string location) {
 			body.append_attribute("SFriction").set_value((*world)[i].static_friction);
 			body.append_attribute("Velocity").set_value(writeVec((*world)[i].trans.velocity).c_str());
 			body.append_attribute("Accelaration").set_value(writeVec((*world)[i].trans.accelaration).c_str());
-			body.append_attribute("Clockwise").set_value((*world)[i].shape.clockwise);
+			body.append_attribute("Clockwise").set_value((*world)[i].clockwise);
 			//save sides
 			std::string sides = "";
-			for (const geo::vec& j : (*world)[i].shape.points) {
+			for (const geo::vec& j : (*world)[i].points) {
 				sides = sides += writeVec(j);
 			}
 			body.append_attribute("Sides").set_value(sides.c_str());
 
 		}
 	}
+
+	//save camera
+	pugi::xml_node camera = universe.append_child("Camera");
+	{
+		pugi::xml_attribute attribute = camera.append_attribute("Translation");
+		attribute.set_value(writeVec(cam.totalTranslation).c_str());
+		attribute = camera.append_attribute("Rotation");
+		attribute.set_value(cam.totalRotation);
+		attribute = camera.append_attribute("Zoom");
+		attribute.set_value(cam.totalZoom);
+	}
 	
-	if (save.save_file(location.c_str())) return 0;
+	if (save.save_file(location.c_str())) {
+		delete world;
+		return 0;
+	}
+
 	else return -1;
 }
