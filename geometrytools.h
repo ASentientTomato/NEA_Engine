@@ -6,58 +6,40 @@
 namespace geo {
 	//--------------------------------------------VECTOR MATHS--------------------------------------------
 
+	//calculates the dot product of two vectors.
 	inline double dot(vec a, vec b);
+
+	//calculates the magnitude of a vector.
 	inline double magnitude(vec A);
+
+	//prints a vector (for testing).
 	void printVec(vec A);
+
+	//rotates a vector by t radians.
+	vec rotate(vec v, float t);
 
 	//--------------------------------------------MATRIX MATHS--------------------------------------------
 
+	//prints a matrix (for testing).
 	void printMatrix(std::array<double, 3> M);
+
+	//calculates the determinant of a 2x2 matrix.
 	double det2x2(std::array <double, 4> M);
+
+	//calculates the determinant of a 3x3 matrix.
 	double det3x3(std::array <double, 9> M);
+
+	//finds the matrix of cofactors for a 3x3 matrix.
 	std::array<double, 9> cofactorsPlus(std::array<double, 9> M);
+
+	//inverts a 3x3 matrix.
 	std::array < double, 9 > invert3x3(std::array<double, 9> M);
+
+	//multiplies a 3x3 matrix by a 3x1 matrix (or 3x1 vector).
 	std::array <double, 3> multiply3x3X3x1(std::array<double, 9> A, std::array<double, 3> B);
-	
 
-	/*template <class T> class Matrix2D {
-		//		|[0], [1]|		//
-		//		|[2], [3]|		//
-		std::array <T, 4> fields;
-		
-	public:
-		Matrix2D(T a, T b, T c, T d) {
-			this->fields = { a,b,c,d };
-		}
 
-		Matrix2D(T floats[4]) {
-			this->fields = { floats[0],floats[1],floats[2],floats[3] };
-		}
 
-		Matrix2D operator*(Matrix2D mat) {
-			T values[4];
-			values[0] = this->fields[0] * mat[0] + this->fields[1] * mat[2];
-			values[1] = this->fields[0] * mat[1] + this->fields[1] * mat[3];
-			values[2] = this->fields[2] * mat[0] + this->fields[3] * mat[2];
-			values[3] = this->fields[2] * mat[1] + this->fields[3] * mat[3];
-			return Matrix2D(values);
-		}
-
-		Matrix2D operator *= (Matrix2D mat) {
-			this->fields = (this->operator*(mat)).fields;
-		}
-
-		geo::vec operator * (geo::vec vector) {
-			return { this->fields[0] * vector.x + this->fields[1] * vector.y, this->fields[2] * vector.x + this->fields[3] * vector.y };
-		}
-
-		float& operator[] (size_t position) {
-			return this->fields[position];
-		}
-
-	};
-
-	*/
 	template <class T> class Matrix3D {
 
 		//		{0,1,2}
@@ -77,13 +59,13 @@ namespace geo {
 				}
 			}
 		}
-		Matrix3D(std::array<std::array<T,3>,3> floats) {
+		Matrix3D(std::array<std::array<T, 3>, 3> floats) {
 			this->fields = floats;
 		}
 
 		Matrix3D operator*(Matrix3D mat) {
 			std::array<std::array<T, 3>, 3> result = { {0} };
-			
+
 			for (int i = 0; i < 2; i++) {
 				for (int j = 0; j < 3; j++) {
 					for (int k = 0; k < 3; k++) {
@@ -124,19 +106,47 @@ namespace geo {
 
 	//------------------------------------------UTILITY FUNCTIONS------------------------------------------
 
+	//Calculates the v-value of a point Q over a line AB.
 	double getV(vec A, vec B, vec Q);
+
+	//Calculates the closest point on a line AB to a point Q.
 	vec closestPoint(vec A, vec B, vec Q);
-	int support(const convex& A, const vec &d);
-	vec minowskyDifference(const convex &A, const convex &B, const vec d);
-	bool contains(std::vector<vec> &V, vec v);
+
+	//Returns the point in A which has the greatest dot product with d.
+	int support(const convex& A, const vec& d);
+
+	//Returns the difference between support(A,d) and support(b,-d).
+	vec minkowskiDifference(const convex& A, const convex& B, const vec d);
+
+	//returns True if V contains an instance of v.
+	bool contains(std::vector<vec>& V, vec v);
+
+	//Runs EPA, returning the collision normal for two shapes that are colliding.
 	vec epa(const convex& A, const convex& B, simplexVec S);
+
+	/*	Calculates which vertex is most perpendicular to penetrationNormal:
+	  A[v+1]-A[v] or A[v]-A[v-1]. Considers circular nature of shapes.	*/
 	int mostPerpendicular(const convex& A, const int v, const vec penetrationNormal);
+
+	//Returns true if Q is on the left of the line AB.
 	bool onLeftOfLine(const vec A, const vec B, const vec Q, bool clockwise);
+
+	/*	Gets the indices of the next and previous points to a in a shape of size "size".
+	  Considers the cyclical nature of shapes - the two ends of the shape are connected. */
 	vec getNextAndPrevious(int a, int size);
+
+	/*	returns true if p is inside the convex shape A. "startpoint1" and "startpoint2"
+		represent the indices of a likely separating axis, allowing the function to return
+		early. They can, however, be set arbitrarily.	*/
 	bool isPointInside(vec p, const convex* A, int startpoint1 = 0, int startpoint2 = 1);
+
+	/*	rearranges two vertices (which it takes by reference), a and b, in a shape of size
+		"size" so that the index of b is greater than the index of a. Considers the fact
+		that shapes are cyclical.	*/
 	void putInOrder(int& a, int& b, int size);
 
-	//returns a manifold containing the forces A should exert on B.
+	/*	returns a manifold containing information about the collision between A and B.
+		When impulses are calculated, remember that the collision normal points from A to B!	*/
 	vec getCollisionData(const convex& A, const convex& B, collision& man, line& incline, line& refline);
 
 }

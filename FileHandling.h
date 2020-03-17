@@ -156,8 +156,9 @@ World* loadGameState(std::string location) {
 		{
 			std::string momentOfInertia = body.attribute("MOI").value();
 			if (momentOfInertia == "INFINITY") {
-				//rigid.rot.momentOfInertia = std::numeric_limits<float>::infinity(); <- TODO: This should work. But it doesn't. Tested by changing the Game.cpp rigidbody to have INFINITY mass instead of DBL_MAX. Things teleport.
-				rigid.rot.momentOfInertia = FLT_MAX;
+				//rigid.rot.momentOfInertia = std::numeric_limits<float>::infinity(); <- TODO: This should work. But it doesn't.
+				//Tested by changing the Game.cpp rigidbody to have INFINITY mass instead of DBL_MAX. Things teleport.
+				rigid.rot.momentOfInertia = FLT_MAX;//<- this works perfectly well, though.
 				rigid.rot.inv_MOI = 0;
 			}
 			else {
@@ -291,9 +292,9 @@ int saveGameState(World* world, std::string location, Camera& cam) {
 
 		}
 	}
-
 	//save camera
-	pugi::xml_node camera = universe.append_child("Camera");
+	pugi::xml_node graphics = universe.append_child("Graphics");
+	pugi::xml_node camera = graphics.append_child("Camera");
 	{
 		pugi::xml_attribute attribute = camera.append_attribute("Translation");
 		attribute.set_value(writeVec(cam.totalTranslation).c_str());

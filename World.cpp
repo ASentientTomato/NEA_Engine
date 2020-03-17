@@ -8,7 +8,10 @@ void World::Integrate(float dt){
 
 void World::GenerateManifolds() {
 	//TODO: Get an algorithm that isn't O(n^2) - this one is only for testing
-	//TODO: add a pointer to the manifold in the rigidbody class - sometimes it is needed to do something special in the case of a collision (for instance, in a game health might be lost when colliding with a bullet).
+	/*TODO: add a pointer to the manifold in the rigidbody class - sometimes 
+	it is needed to do something special in the case of a collision (for instance,
+	in a game health might be lost when colliding with a bullet). Currently, all
+	collision manifolds must be searched through to find one involving a specific shape.*/
 
 	geo::collision man;
 	geo::line inc;
@@ -57,6 +60,10 @@ void World::push_back(Rigidbody r) {
 
 size_t World::size(){
 	return WORLD_SHAPES.size();
+}
+
+void World::remove(int i) {
+	this->WORLD_SHAPES.erase(this->WORLD_SHAPES.begin() + i);
 }
 
 std::vector<Rigidbody>* World::getDataAddress() {

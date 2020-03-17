@@ -1,18 +1,43 @@
-﻿  Game.cpp
-C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Game.cpp(164,28): warning C4305:  'argument': truncation from 'double' to 'float'
-C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Game.cpp(167,29): warning C4305:  'argument': truncation from 'double' to 'float'
-C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Game.cpp(190,23): warning C4305:  'argument': truncation from 'double' to 'float'
-C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Game.cpp(193,24): warning C4305:  'argument': truncation from 'double' to 'float'
-C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Game.cpp(196,21): warning C4305:  'argument': truncation from 'double' to 'float'
-C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Game.cpp(199,22): warning C4305:  'argument': truncation from 'double' to 'float'
-C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Game.cpp(210,30): warning C4838:  conversion from 'T' to 'double' requires a narrowing conversion
-C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Game.cpp(210,30): warning C4838:         with
-C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Game.cpp(210,30): warning C4838:         [
-C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Game.cpp(210,30): warning C4838:             T=int
-C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Game.cpp(210,30): warning C4838:         ]
-C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Game.cpp(210,41): warning C4838:  conversion from 'T' to 'double' requires a narrowing conversion
-C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Game.cpp(210,41): warning C4838:         with
-C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Game.cpp(210,41): warning C4838:         [
-C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Game.cpp(210,41): warning C4838:             T=int
-C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Game.cpp(210,41): warning C4838:         ]
+﻿  Camera.cpp
+  Game.cpp
+C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Game.cpp(182,46): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Game.cpp(222,24): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Game.cpp(225,25): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Game.cpp(230,21): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Game.cpp(233,22): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Game.cpp(245,31): warning C4838: conversion from 'T' to 'double' requires a narrowing conversion
+          with
+          [
+              T=int
+          ]
+C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Game.cpp(245,43): warning C4838: conversion from 'T' to 'double' requires a narrowing conversion
+          with
+          [
+              T=int
+          ]
+C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Game.cpp(275,30): warning C4838: conversion from 'T' to 'double' requires a narrowing conversion
+          with
+          [
+              T=int
+          ]
+C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Game.cpp(275,41): warning C4838: conversion from 'T' to 'double' requires a narrowing conversion
+          with
+          [
+              T=int
+          ]
+C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Game.cpp(367,26): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Game.cpp(370,27): warning C4305: 'argument': truncation from 'double' to 'float'
+  Physics.cpp
+C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Physics.cpp(82,33): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\Physics.cpp(237,69): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+  World.cpp
+  geometrytools.cpp
+C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\geometrytools.cpp(202,30): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\geometrytools.cpp(284,37): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\geometrytools.cpp(454,61): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\geometrytools.cpp(470,85): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\geometrytools.cpp(483,56): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\geometrytools.cpp(415,13): warning C4102: 'problems': unreferenced label
+C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\geometrytools.cpp(368,9): warning C4101: 'closest': unreferenced local variable
+  Generating Code...
   PhysicsEngine.vcxproj -> C:\Users\ntsel.DINOPC\source\repos\PhysicsEngine\NEA_Engine\x64\Debug\PhysicsEngine.exe

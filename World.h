@@ -29,6 +29,8 @@ public:
 	//Get access to WORLD_SHAPES.size()
 	size_t size();
 
+	void remove(int i);
+
 	//Initialise world with shape list
 	World(std::vector<Rigidbody> shapes);
 };

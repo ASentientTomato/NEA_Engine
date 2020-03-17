@@ -39,7 +39,7 @@ public:
 	Shape applyMatrix(geo::Matrix3D<float> mat, const geo::vec& center);
 	int next(int i);
 	int previous(int i);
-	geo::vec& operator[](int i);
+//	geo::vec& operator[](int i);
 
 	Graphics::Displayable displayable;
 };
@@ -74,3 +74,6 @@ void resolveManifold(manifold man);
 //returns true if shape's winding is clockwise
 //works for all shapes
 bool isClockwise(Shape sh);
+
+
+

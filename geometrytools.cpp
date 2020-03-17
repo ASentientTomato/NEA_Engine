@@ -13,6 +13,11 @@ namespace geo{
 	void printVec(vec A) {
 		std::cout << "(" << A.x << ", " << A.y << ") ";
 	}
+	vec rotate(vec v, float t) {
+		float cosine = cos(t);
+		float sine = sin(t);
+		return geo::vec{ cosine * v.x - sine * v.y, sine * v.x + cosine * v.y };		
+	}
 	//bool compare(vec A, vec B) {
 	//	return (A.x == B.x && A.y == B.y);
 	//}
@@ -39,12 +44,11 @@ namespace geo{
 	}
 	std::array < double, 9 > cofactorsPlus(std::array<double, 9> M) {	//This line might not work for all compilers...? (C++11 onwards, I think)
 	//i swear to god if i made a typo here
-	//EDIT: I made a typo here.
 
 		std::array <double, 4> a = { M[4],M[5],M[7],M[8] };
 		std::array <double, 4> b = { M[3],M[5],M[6],M[8] };
 		std::array <double, 4> c = { M[3],M[4],M[6],M[7] };
-		std::array <double, 4> d = { M[1],M[2],M[7],M[8] };
+		std::array <double, 4> d = { M[1],M[7],M[7],M[8] };
 		std::array <double, 4> e = { M[0],M[2],M[6],M[8] };
 		std::array <double, 4> f = { M[0],M[1],M[6],M[7] };
 		std::array <double, 4> g = { M[1],M[2],M[4],M[5] };
@@ -91,7 +95,6 @@ namespace geo{
 	//-----------------------------------------------Collision Detection-----------------------------------------------
 
 	double getV(vec A, vec B, vec Q) {
-		//let's use doubles! (naive solution, but it might just work:)
 		vec n = B - A;
 		double abMag = sqrt(double(n.x*n.x + n.y*n.y));
 		abMag = 1 / abMag;
@@ -131,7 +134,7 @@ namespace geo{
 		return index;
 	}
 
-	vec minowskyDifference(const convex &A, const convex &B, const vec d)
+	vec minkowskiDifference(const convex &A, const convex &B, const vec d)
 	{
 		return (A.points[support(A, d)] - B.points[support(B, d * -1)]);
 	}
@@ -165,7 +168,7 @@ namespace geo{
 				}
 			}
 
-			vec newPoint = minowskyDifference(A, B, direction);
+			vec newPoint = minkowskiDifference(A, B, direction);
 			if (contains(shape, newPoint)) {
 				return direction;
 			}
@@ -245,8 +248,9 @@ namespace geo{
 		return vec{ (double)a - 1,(double)a + 1 };
 	}
 
-	//-by considering the two startpoints, I can make this method somewhat more efficient
-	//-since I know where p is inside the shape, I can make considerable efficiency improvements (over, say, using GJK here)
+	/*-by considering the two startpoints, I can make this method somewhat more efficient
+	-since I know where p is inside the shape, I can make considerable efficiency improvements 
+	(over, say, using GJK here)*/
 	bool isPointInside(vec p, const convex *A, int startpoint1, int startpoint2)
 	{
 		bool clockwise = A->clockwise;
@@ -287,7 +291,7 @@ namespace geo{
 
 		return true;
 	}
-
+	
 
 
 	//takes in two integers (a and b) which MUST be next to each other
@@ -318,10 +322,10 @@ namespace geo{
 		//pick arbitrary initial simplex
 		simplexVec S;
 		S.count = 1;	//TODO: this function is structured in a really dumb way.
-		S.vertexA = minowskyDifference(A, B, A.points[0]);
+		S.vertexA = minkowskiDifference(A, B, A.points[0]);
 		vec d = A.points[0] * -1;	//this is lacking a lot of potential efficiency improvements.
 		S.count = 2;	//I should implement them at some point.
-		S.vertexB = minowskyDifference(A, B, d);
+		S.vertexB = minkowskiDifference(A, B, d);
 		if (S.vertexA.x == S.vertexB.x && S.vertexA.y == S.vertexB.y) {
 			return S.vertexA;
 		}
@@ -341,7 +345,7 @@ namespace geo{
 				if (d.x == 0 && d.y == 0 || abs(d.x) < 0.0000001 && abs(d.y) < 0.0000001) {
 					return onLine;
 				}
-				vec toAdd = minowskyDifference(A, B, d);
+				vec toAdd = minkowskiDifference(A, B, d);
 				if ((toAdd == S.vertexA) || (toAdd == S.vertexB)) {
 					return onLine;
 				}
@@ -357,8 +361,8 @@ namespace geo{
 
 				vec Q = { 0,0 };
 
-				double vAB = getV(A1, B1, Q);
-				double vBC = getV(B1, C1, Q);
+				//double vAB = getV(A1, B1, Q);
+				//double vBC = getV(B1, C1, Q);
 				double vCA = getV(C1, A1, Q);
 
 				vec closest;
@@ -416,7 +420,8 @@ namespace geo{
 						b = 0;
 					}
 
-					//determine reference and incident shape (incident = more perpendicular to the penetration normal = the penetrating shape)
+					/*determine reference and incident shape (incident = more perpendicular
+					to the penetration normal = the penetrating shape)*/
 					if (a < b || (a == b && dot(lineB, lineB) > dot(lineA, lineA))) {
 						referenceShape = &B;
 						man.aIsReference = false;
@@ -529,7 +534,9 @@ namespace geo{
 
 
 					man.contactcount = 2;//todo
-					vec penetrationVector = closestPoint(referenceShape->points[reference1], referenceShape->points[reference2], incidentShape->points[incident2]) - incidentShape->points[incident2];
+					vec penetrationVector = closestPoint(referenceShape->points[reference1], 
+						referenceShape->points[reference2], incidentShape->points[incident2])
+						- incidentShape->points[incident2];
 					man.contacts[1].penetration = magnitude(penetrationVector);
 					man.contacts[1].normal = penetrationVector * (1 / man.contacts[1].penetration);
 					if (!man.aIsReference) {

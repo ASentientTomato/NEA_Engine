@@ -7,7 +7,7 @@ namespace geo{
 		double x;
 		double y;
 		inline vec operator+(const vec& v) const {		//these inline declarations are likely already performed by the compiler, but why not use em anyway just in case
-			return vec{ x + v.x, y + v.y };
+ 			return vec{ x + v.x, y + v.y };
 		}
 		inline void operator+=(const vec& v) {
 			this->x += v.x;

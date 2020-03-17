@@ -19,6 +19,7 @@
 		this->center = { screenSize.x / 2, screenSize.y / 2 };
 	}
 
+	//initializes camera (run this on creation/rebinding!)
 	void Camera::prepare() {
 		this->displayable.clear();
 		Shape shape;
@@ -35,6 +36,7 @@
 
 	}
 
+	//Find where a shape would be visible to the camera.
 	Shape Camera::project(const Shape& rigid) {
 		Shape shape = rigid;
 
@@ -54,7 +56,6 @@
 		shape.rotate(totalRotation * -1, center);
 		shape.zoom(1 / totalZoom, center);
 
-		//this will probably not work...
 		shape.translate(totalTranslation * -1);
 	
 		return shape;
@@ -66,7 +67,6 @@
 		s = this->inverse(s);
 		return s.points[0];
 
-		//TODO: this is a bit of a silly method. Change it.
 	}
 
 

@@ -76,7 +76,7 @@ int Shape::next(int i) {
 		return i+1;
 	}
 }
-
+//TODO: this sort of stuff should really be handeled by iterators 
 int Shape::previous(int i) {
 	if (i <= 0) {
 		return this->points.size() - 1;
@@ -85,9 +85,11 @@ int Shape::previous(int i) {
 		return i - 1;
 	}
 }
-geo::vec& Shape::operator[](int i) {
-	return this->points[i];
-}
+//geo::vec& Shape::operator[](int i) {
+//	return this->points[i];
+//}
+
+
 /*template<class T> Shape Shape::applyMatrix(geo::Matrix3D<T> mat, const geo::vec& center) {
 	geo::vec temp;
 	Shape shape;
@@ -220,7 +222,6 @@ void Rigidbody::applyForce(geo::vec toApply) {
 
 void Rigidbody::forceIntegration(float dt) {
 	//semi-implicit euler integration//
-	//¯\_(ツ)_/¯//
 	this->trans.velocity = this->trans.velocity + (this->trans.accelaration * dt);
 	this->translate(this->trans.velocity * dt);
 	this->trans.accelaration = { 0,0 };
@@ -239,18 +240,15 @@ void Rigidbody::applyImpulse(const geo::vec& impulse, const geo::vec& rx) {
 
 void resolveManifold(manifold man) {
 
-	static int i = 0;
-	i++;
-	if (i == 24) {
-		std::cout << "bruh";
-	}
-
-	//TODO: test out other methods to calculate the frictions (i.e. pythagoras, always choose greatest/smallest).
+	//Get the overall static and dynamic friction values for the collision's shapes, by getting the mean.
+	//TODO: maybe test out other methods to calculate the frictions (i.e. pythagoras, always choose greatest/smallest).
 	float staticFriction = (man.A->static_friction + man.B->static_friction) / 2;
 	float dynamicFriction = (man.A->dynamic_friction + man.B->dynamic_friction) / 2;
 
 
-
+	//Get the overall restitution value for the collision's shapes by selecting the smaller of the two.
+	/*This gets realistic results since this is what happens in real life - if a bouncy ball is thrown
+	against a soft surface, it won't bounce*/
 	double restitution;
 	if (man.A->restitution < man.B->restitution) {
 		restitution = man.A->restitution;
@@ -292,9 +290,9 @@ void resolveManifold(manifold man) {
 			man.B->translate(alpha * man.A->trans.mass);
 			man.A->translate(alpha * -man.B->trans.mass);
 		}
-		if (dot(alpha, alpha) < 1e-350) {
-			alpha = { 0, 0 };
-		}
+		//if (dot(alpha, alpha) < 1e-350) {
+		//	alpha = { 0, 0 };
+		//}
 	}
 
 
@@ -311,7 +309,7 @@ void resolveManifold(manifold man) {
 			//don't resolve if objects are moving apart
 			return;
 		}
-		//TODO: maybe use the other formula
+		//Apply formula
 		double totalInverseMasses = man.A->trans.inv_mass + man.B->trans.inv_mass;
 		double division = totalInverseMasses + (std::pow(cross(ra, man.col.contacts[i].normal), 2) * man.A->rot.inv_MOI)
 			+ (std::pow(cross(rb, man.col.contacts[i].normal), 2) * man.B->rot.inv_MOI);

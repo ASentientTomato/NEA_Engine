@@ -25,7 +25,7 @@ public:
 	//
 	void prepare();
 
-	//project a single shape to where it would appear from the camera's point of vies
+	//project a single shape to where it would appear from the camera's point of view
 	Shape project(const Shape& rigid);
 
 	//translate relative to the position of the camera
